@@ -1,10 +1,10 @@
 import datetime
 import numpy as np
 import math
+from src.general_player import Player
 from src.tree_node import Node,Node_threaded
-class MCTS_threaded(MCTS):
-    def __init__(self, model, **kwargs):
-        super().__init(model, **kwargs)
+
+
 
 
 class MCTS():
@@ -14,33 +14,43 @@ class MCTS():
         self.model = model
         self.time_limit = datetime.timedelta(seconds=self.seconds)
 
-    def search(self, root_node):
+    def search(self, root_node, simulation_limit=None):
         self.root_node = root_node
         self.root_node.parent = None
-        begin = datetime.datetime.utcnow()
-        while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
-            self.run_one_simulation()
+        if simulation_limit is None:
+            begin = datetime.datetime.utcnow()
+            while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
+                self.run_one_simulation()
+        else:
+            for i in range(simulation_limit):
+                self.run_one_simulation()
         return self.root_node
 
     def run_one_simulation(self):
-        last_node = self.simulate_to_leaf()
-        self.backpropagation(last_node)
+        last_node, nodes_visited = self.simulate_to_leaf()
+        self.backpropagation(last_node,nodes_visited)
 
     def simulate_to_leaf(self):
+        nodes_visited = []
         node = self.root_node
-        while not node.is_terminal:
+        while not node.is_terminal():
+            nodes_visited.append(node)
             move_index = self.select(node)
             new_node = node.children[move_index]
             if new_node is None:
-                return node.expand_and_evaluate(move_index,self.model)
+                node = node.expand_and_evaluate(move_index,self.model)
+                break
             node = new_node
-        return node
+        return (node,nodes_visited)
 
 
     def select(self, node):
-        side = node.state.player
+        side = node.state.turn()
         scores = np.array([self.UCT_score(child,node) for child in node.children])
-        best_index = scores.argmax(scores)
+        if side == Player.A:
+            best_index = np.argmax(scores)
+        else:
+            best_index = np.argmin(scores)
         return best_index
 
     def UCT_score(self, node,parent):
@@ -68,13 +78,11 @@ class MCTS():
             move_index = ranks.argmax()
         return parent_node.get_child(move_index)
 
-    def backpropagation(self, node):
-        current_node = node.parent
-        while not current_node is None:
-            current_node.Q_blue += node.get_Q(Color.BLUE)
-            current_node.Q_red += node.get_Q(Color.RED)
-            current_node.N += 1
-            current_node = current_node.parent
+    def backpropagation(self, node,nodes_visited):
+        v = node.get_V()
+        for node_inner in nodes_visited:
+            node_inner.update_values(v)
+
 
     # def stats(self):
     #     inf = {}
@@ -91,3 +99,6 @@ class MCTS():
     #     return inf
 
 
+class MCTS_threaded(MCTS):
+    def __init__(self, model, **kwargs):
+        super().__init(model, **kwargs)

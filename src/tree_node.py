@@ -33,7 +33,7 @@ class Node(object):
 
     C = math.sqrt(2)
 
-    def __init__(self, state, p, parent=None):
+    def __init__(self, state, p=0, parent=None):
         self.state = state
         self.parent = parent
         self.W = 0                  # Accumulated value of all nodes below this one
@@ -91,12 +91,18 @@ class Node(object):
         self.__calc_Q()
         self.V = z_estimate
 
+    def get_V(self):
+        return self.V
+
 
     def __calc_Q(self):
         self.Q = self.W / self.N
 
     def __increment_N(self):
         self.N += 1
+
+    def is_terminal(self):
+        return self.state.is_over()
 
     def __add_to_W(self, x):
         self.W += x
