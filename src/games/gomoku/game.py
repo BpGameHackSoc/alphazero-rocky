@@ -26,8 +26,11 @@ class GomokuState(GameState):
         out += ' Turn: ' + str(self.turn.str()) + str('\n')
         return out
 
-    def turn():
+    def turn(self):
         return Player(self.turn.value)
+
+    def move_count(self):
+        return (self.board != 0).sum()
 
     def valid_moves(self):
         return np.array(np.where(self.board.reshape(-1) == 0)).flatten()
@@ -63,11 +66,22 @@ class GomokuState(GameState):
                     return winner
         return Color.NONE
 
-    def to_input(self):
-        x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
-        x[0][self.board == self.turn.value] = 1
-        x[1][self.board == -1 * self.turn.value] = 1
-        return x
+
+    def to_input(self, p):
+        transformations = []
+        p = p.reshape(BOARD_SIZE, BOARD_SIZE)
+        for i in range(4):
+            rotated_board = np.rot90(self.board, i)
+            rotated_p = np.rot90(p, i)
+            one_input = [self.__board_to_input(rotated_board),
+                         self.turn.value, rotated_p.reshape(-1)]
+            transformations.append(one_input)
+            flipped_board = rotated_board.transpose()
+            flipped_p = rotated_p.transpose()
+            one_input = [self.__board_to_input(flipped_board),
+                         self.turn.value, flipped_p.reshape(-1)]
+            transformations.append(one_input)
+        return transformations
 
     def copy(self, swap=False):
         s = GomokuState()
@@ -79,6 +93,12 @@ class GomokuState(GameState):
 
     def swap_turn(self):
         self.turn = Color(self.turn.value * -1)
+
+    def __board_to_input(self, board):
+        x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
+        x[0][board == self.turn.value] = 1
+        x[1][board == -1 * self.turn.value] = 1
+        return x
 
     def __crop(self):
         if self.__board_is_empty():

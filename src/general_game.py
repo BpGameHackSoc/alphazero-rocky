@@ -5,6 +5,10 @@ class GameState(abc.ABC):
         The game state object represents the model of a game, the rules,
         the board and its pieces. Note it only represents one specific state
         where the game is at, but not more.
+
+        Some MUST rules:
+            1. This is a zero-sum, 2 player game
+            2. The moves are integers, starting from 0
     '''
     @abc.abstractmethod
     def __init__(self):
@@ -24,7 +28,14 @@ class GameState(abc.ABC):
             each state must be someone's turn. This function should return 
             with the Player enum object.
         '''
-        return Turn(1)
+        return Player(1)
+
+    @abc.abstractmethod
+    def move_count(self):
+        '''
+            Returns with how many moves were made so far during the game.
+        '''
+        pass
 
     @abc.abstractmethod
     def move(self, move_index):
@@ -62,11 +73,19 @@ class GameState(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def to_input(self):
+    def to_input(self, probabilities):
         '''
             Converts the state to an input for a neural network.
             E.g. in chess, it should handle the following information:
                 [board, turn, castling_rights, en_passant, half_moves]
-            Note this function must return with a numpy matrix!
+
+            Note this function must return with a numpy matrix as:
+                [[state, (int) player_on_turn, probabilities]
+                 [state, (int) player_on_turn, probabilities]
+                 [state, (int) player_on_turn, probabilities]]
+
+            The idea behind this method is that the board in some games such as othello
+            or go can be be rotated or flipped.
+
         '''
         pass
