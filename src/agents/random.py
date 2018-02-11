@@ -9,7 +9,7 @@ class RandomAgent(Agent):
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', 'random')
 
-    def move(self, state):
+    def move(self, state, **kwargs):
         valid = state.valid_moves()
         return np.random.choice(valid)
 

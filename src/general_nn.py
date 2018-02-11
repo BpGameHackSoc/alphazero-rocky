@@ -4,26 +4,27 @@ from keras.models import Sequential, load_model, Model
 from keras.layers.merge import Add
 from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
-from src.config import DEFAULT_NEURAL_NET_SETTINGS
+from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
 
 class NeuralNetwork(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, model_path=None):      
+    def __init__(self, model_name=None):      
         self.config()
+        self.init_model(model_name)
 
     def config(self):
         self.config = {}
         for key, value in DEFAULT_NEURAL_NET_SETTINGS.items():
             self.config[key] = value
 
-    def init_model(self, model_path):
-        if model_path is None:
-            self.new_model(self.config['input_shape'])
+    def init_model(self, model_name):
+        if model_name is None:
+            self.new_model()
         else:
-            self.load(model_path)
+            self.load(model_name)
 
-    def new_model(self, input_shape):
-        inp = Input(input_shape)
+    def new_model(self):
+        inp = Input(self.config['input_shape'])
         x = self.conv_layer(inp, 'firstconv_')
         for i in range(self.config['res_layer_n']):
             x = self.res_layer(x, i+1)
@@ -90,7 +91,7 @@ class NeuralNetwork(abc.ABC):
         x = Activation("relu", name=prefix+"_relu"+suffix)(x)
         return x
 
-    def learn(self, states, values, probabilities, save=False, relative_path=None):
+    def learn(self, states, values, probabilities):
         states = np.array(states)
         values = np.array(values)
         probabilities = np.array(probabilities)
@@ -99,23 +100,23 @@ class NeuralNetwork(abc.ABC):
             [values, probabilities],
             batch_size=self.config['batch_size'],
             epochs=self.config['epochs'],
-            verbose=self.config['verbose']
+            verbose=self.config['verbose'],
+            validation_split=self.config['validation_split'],
+            shuffle=True
         )
-        self.history.extend(history)
-        if save:
-            self.save(relative_path)
 
     def predict(self, states):
         return self.model.predict(states)
 
-    def save(self, relative_path=None):
-        relative_path = self.__random_string(15) if relative_path is None else relative_path
-        path = 'bin/' + relative_path + '.h5'
+    def save(self, file_name=None, to_print=True):
+        file_name = self.__random_string(15) if file_name is None else file_name
+        path = WORK_FOLDER + file_name + '.h5'
         self.model.save(path)
-        print('Model saved in ' + path)
+        if to_print:
+            print('Model saved in ' + path)
 
-    def load(self, path):
-        self.model = load_model(path)
+    def load(self, file_name):
+        self.model = load_model(WORK_FOLDER + file_name + '.h5')
 
     def __random_string(self, n):
         return ''.join(np.random.choice(list(string.ascii_lowercase+ string.digits), n))

@@ -18,3 +18,10 @@ NEURAL_NET_SETTINGS = {
     'res_layer_n' : 2,
     'input_shape' : (2,3,3),
 }
+
+# ==============================================================
+# TRAINING
+# ==============================================================
+
+TEMP_THRESHOLD = BOARD_SIZE
+TEMP_DECAY = 1. / BOARD_SIZE
