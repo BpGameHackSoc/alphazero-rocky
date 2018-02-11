@@ -1,6 +1,7 @@
 from src.games.gomoku.config import *
 from src.games.gomoku.color import Color
 from src.general_game import GameState
+from src.general_player import Player
 import numpy as np
 
 class GomokuState(GameState):
@@ -24,6 +25,9 @@ class GomokuState(GameState):
         out = out[:-1]
         out += ' Turn: ' + str(self.turn.str()) + str('\n')
         return out
+
+    def turn():
+        return Player(self.turn.value)
 
     def valid_moves(self):
         return np.array(np.where(self.board.reshape(-1) == 0)).flatten()
@@ -58,6 +62,12 @@ class GomokuState(GameState):
                     self.__winner = winner
                     return winner
         return Color.NONE
+
+    def to_input(self):
+        x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
+        x[0][self.board == self.turn.value] = 1
+        x[1][self.board == -1 * self.turn.value] = 1
+        return x
 
     def copy(self, swap=False):
         s = GomokuState()
