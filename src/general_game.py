@@ -6,6 +6,9 @@ class GameState(abc.ABC):
         the board and its pieces. Note it only represents one specific state
         where the game is at, but not more.
     '''
+    @abc.abstractmethod
+    def __init__(self):
+        pass
 
     @abc.abstractmethod
     def __str__(self):
@@ -13,6 +16,15 @@ class GameState(abc.ABC):
             A string representation of the state
         '''
         pass
+
+    @abc.abstractmethod
+    def turn(self):
+        '''
+            Since each game the engine solves is a two-player zero-sum game,
+            each state must be someone's turn. This function should return 
+            with the Player enum object.
+        '''
+        return Turn(1)
 
     @abc.abstractmethod
     def move(self, move_index):
@@ -46,5 +58,15 @@ class GameState(abc.ABC):
                 return: [IntEnum]   1 --> Starting player won
                                    -1 --> Second player won
                                     0 --> Draw
+        '''
+        pass
+
+    @abc.abstractmethod
+    def to_input(self):
+        '''
+            Converts the state to an input for a neural network.
+            E.g. in chess, it should handle the following information:
+                [board, turn, castling_rights, en_passant, half_moves]
+            Note this function must return with a numpy matrix!
         '''
         pass
