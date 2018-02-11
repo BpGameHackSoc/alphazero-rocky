@@ -23,5 +23,3 @@ class Node(object):
         new_state = self.state.move(move)
         self.children[move] = Node(new_state, nn, self.children_p[move], self)
         
-
-
