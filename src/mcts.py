@@ -91,19 +91,15 @@ class MCTS():
             node_inner.update_values(v)
 
 
-    # def stats(self):
-    #     inf = {}
-    #     inf['max_depth'] = self.root_node.max_depth()
-    #     inf['prediction'] = self.root_node.UCT_score(self.root_node.gomoku.turn)
-    #     inf['blue_q'] = self.root_node.UCT_score(Color.BLUE)
-    #     inf['red_q'] = self.root_node.UCT_score(Color.RED)
-    #     inf['n'] = self.root_node.N
-    #     inf['node/s'] = self.root_node.N / self.seconds
-    #     ranks = self.rank_moves(self.root_node)
-    #     ranks = ranks[ranks[:, 1].argsort(kind='mergesort')]
-    #     ranks = ranks[::-1]
-    #     inf['ranks'] = ranks
-    #     return inf
+    def stats(self):
+        inf = {}
+        inf['max_depth'] = self.root_node.max_depth()
+        inf['prediction'] = self.root_node.V[0]
+        inf['Q'] = self.root_node.get_Q()
+        inf['n'] = self.root_node.N
+        inf['node/s'] = self.root_node.N / self.seconds
+        inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
+        return inf
 
 
 class MCTS_threaded(MCTS):
