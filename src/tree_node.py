@@ -71,7 +71,7 @@ class Node(object):
 
 
     def is_leaf(self):
-        return len(self.children) == 0
+        return not any(self.children)
 
     def get_child(self,move):
         return self.children[move]
@@ -129,15 +129,15 @@ class Node_threaded(Node):
     """
     def __init__(self, gomoku, move, parent, p):
         super().__init__(gomoku, move, parent, p)
-        self.update_lock = threading.Lock()
-        self.creation_lock = threading.Lock()
+        self.update_lock = threading.RLock()
+        # self.creation_lock = threading.Lock()
 
-    def update_values(self, z_estimate):
-        if self.update_lock.acquire():
-            super().update_values(z_estimate)
-            self.update_lock.release()
-        else:
-            raise ThreadException("Could not acquire lock")
+    # def update_values(self, z_estimate):
+    #     if self.update_lock.acquire():
+    #         super().update_values(z_estimate)
+    #         self.update_lock.release()
+    #     else:
+    #         raise ThreadException("Could not acquire lock")
 
 
 

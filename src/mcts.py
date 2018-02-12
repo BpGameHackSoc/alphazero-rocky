@@ -2,7 +2,9 @@ import datetime
 import numpy as np
 import math
 from src.general_player import Player
-from src.tree_node import Node,Node_threaded
+from src.tree_node import Node
+
+
 
 
 
@@ -106,6 +108,7 @@ class MCTS():
     #     return inf
 
 
-class MCTS_threaded(MCTS):
-    def __init__(self, model, **kwargs):
-        super().__init(model, **kwargs)
+
+
+
+
