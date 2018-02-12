@@ -62,7 +62,7 @@ class Node(object):
             self.update_values(z)
             self.is_terminal = True
         else:
-            s = np.expand_dims(self.state.get_state(), axis=0)
+            s = self.state.to_input()
             v, p = model.predict(s)
             v = v.flatten()
             self.update_values(v)
@@ -76,7 +76,7 @@ class Node(object):
     def get_child(self,index):
         return self.children[index]
 
-    def get_Q(self, color):
+    def get_Q(self):
             return self.Q
 
     def get_p(self):
@@ -106,6 +106,9 @@ class Node(object):
 
     def __add_to_W(self, x):
         self.W += x
+
+    def is_visited(self):
+        return self.get_N()!=0
 
     def get_aggragate_values(self):
         return (self.W, self.Q, self.N)

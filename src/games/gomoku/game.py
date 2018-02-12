@@ -12,7 +12,7 @@ class GomokuState(GameState):
     '''
     def __init__(self, state=None):
         self.board = np.zeros((BOARD_SIZE, BOARD_SIZE))
-        self.turn = Color.X
+        self.turn_color = Color.X       # TODO change awkward name, but not to turn because member hiddes method when named the same
         self.__winner = None
 
     def __str__(self):
@@ -23,11 +23,11 @@ class GomokuState(GameState):
         for row in str_board:
             out += (' '.join(row) + str('\n'))
         out = out[:-1]
-        out += ' Turn: ' + str(self.turn.str()) + str('\n')
+        out += ' Turn: ' + str(self.turn_color.str()) + str('\n')
         return out
 
     def turn(self):
-        return Player(self.turn.value)
+        return Player(self.turn_color.value)
 
     def move_count(self):
         return (self.board != 0).sum()
@@ -39,7 +39,7 @@ class GomokuState(GameState):
         if not move in self.valid_moves():
             raise Exception('Invalid move was made: ' + str(move))
         new_state = self.copy(swap=True)
-        new_state.board.reshape(-1)[move] = self.turn.value
+        new_state.board.reshape(-1)[move] = self.turn_color.value
         return new_state
 
     def is_over(self):
@@ -74,30 +74,31 @@ class GomokuState(GameState):
             rotated_board = np.rot90(self.board, i)
             rotated_p = np.rot90(p, i)
             one_input = [self.__board_to_input(rotated_board),
-                         self.turn.value, rotated_p.reshape(-1)]
+                         self.turn_color.value, rotated_p.reshape(-1)]
             transformations.append(one_input)
             flipped_board = rotated_board.transpose()
             flipped_p = rotated_p.transpose()
             one_input = [self.__board_to_input(flipped_board),
-                         self.turn.value, flipped_p.reshape(-1)]
+                         self.turn_color.value, flipped_p.reshape(-1)]
             transformations.append(one_input)
         return transformations
+
 
     def copy(self, swap=False):
         s = GomokuState()
         s.board = self.board.copy()
-        s.turn = Color(self.turn.value)
+        s.turn_color = Color(self.turn_color.value)
         if swap:
             s.swap_turn()
         return s
 
     def swap_turn(self):
-        self.turn = Color(self.turn.value * -1)
+        self.turn_color = Color(self.turn_color.value * -1)
 
     def __board_to_input(self, board):
         x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
-        x[0][board == self.turn.value] = 1
-        x[1][board == -1 * self.turn.value] = 1
+        x[0][board == self.turn_color.value] = 1
+        x[1][board == -1 * self.turn_color.value] = 1
         return x
 
     def __crop(self):

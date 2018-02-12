@@ -17,6 +17,8 @@ class MCTS():
     def search(self, root_node, simulation_limit=None):
         self.root_node = root_node
         self.root_node.parent = None
+        if not root_node.is_visited():
+            root_node.evaluate(self.model)
         if simulation_limit is None:
             begin = datetime.datetime.utcnow()
             while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
@@ -46,15 +48,18 @@ class MCTS():
 
     def select(self, node):
         side = node.state.turn()
-        scores = np.array([self.UCT_score(child,node) for child in node.children])
+        scores = np.array([self.UCT_score(child,i,node) for i,child in enumerate(node.children)])
         if side == Player.A:
             best_index = np.argmax(scores)
         else:
             best_index = np.argmin(scores)
         return best_index
 
-    def UCT_score(self, node,parent):
-        return node.get_Q() + Node.C * node.get_p() * math.sqrt(parent.get_N) / node.get_N()
+    def UCT_score(self, node, index, parent):
+        if node is not None:
+            return node.get_Q() + Node.C * node.get_p() * math.sqrt(parent.get_N()) / (node.get_N()+1)
+        else:
+            return Node.C * parent.children_p[index] * math.sqrt(parent.get_N())
 
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
