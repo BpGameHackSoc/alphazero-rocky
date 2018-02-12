@@ -73,7 +73,7 @@ class GameState(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def to_input(self, probabilities):
+    def to_input(self):
         '''
             Converts the state to an input for a neural network.
             E.g. in chess, it should handle the following information:

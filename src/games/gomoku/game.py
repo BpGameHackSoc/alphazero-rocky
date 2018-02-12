@@ -95,10 +95,10 @@ class GomokuState(GameState):
     def swap_turn(self):
         self.turn_color = Color(self.turn_color.value * -1)
 
-    def to_input(self, board):
+    def to_input(self):
         x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
-        x[0][board == self.turn_color.value] = 1
-        x[1][board == -1 * self.turn_color.value] = 1
+        x[0][self.board == self.turn_color.value] = 1
+        x[1][self.board == -1 * self.turn_color.value] = 1
         return x
 
     def __crop(self):

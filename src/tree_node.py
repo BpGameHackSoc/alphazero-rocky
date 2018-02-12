@@ -62,7 +62,7 @@ class Node(object):
             self.update_values(z)
             self.is_terminal = True
         else:
-            s = self.state.to_input(self.state)
+            s = self.state.to_input()
             v, p = model.predict(np.expand_dims(s, axis=0))
             v = v.flatten()
             self.update_values(v)

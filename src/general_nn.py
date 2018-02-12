@@ -59,7 +59,7 @@ class NeuralNetwork(abc.ABC):
         x = self.conv_layer(x, 'policy_', filter_n=2, kernel_size=1)
         x = Flatten()(x)
         x = Dense(self.config['no_of_possible_actions'])(x)
-        x = Activation('sigmoid')(x)
+        x = Activation('softmax')(x)
         return x
 
     def conv_layer(self, x, prefix, suffix='', original_x=None, **kwargs):
