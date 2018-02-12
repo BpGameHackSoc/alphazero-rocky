@@ -23,7 +23,7 @@ class Node(object):
 
     def define_child(self, move):
         new_state = self.state.move(move)
-        self.children[move] = Node(new_state, len(self.children), self.children_p[move], self)
+        self.children[move] = Node(new_state, p=self.children_p[move], parent=self)
         return self.children[move]
 
     def expand_and_evaluate(self,move,model):
@@ -33,7 +33,7 @@ class Node(object):
 
     C = math.sqrt(2)
 
-    def __init__(self, state, max_no_children, p=0, parent=None):
+    def __init__(self, state, p=0, parent=None):
         self.state = state
         self.parent = parent
         self.W = 0                  # Accumulated value of all nodes below this one
@@ -41,7 +41,7 @@ class Node(object):
         self.N = 0                  # The number of visits
         self.p = p                  # The probability of choosing this node from parent
         self.Q = 0
-        self.children = [None] * max_no_children # The child-states  TODO replace with config value
+        self.children = [None] * state.action_space_size() # The child-states  TODO replace with config value
         self.children_p = []        # The probability distribution on child states
 
     def max_depth(self):

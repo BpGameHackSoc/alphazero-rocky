@@ -29,7 +29,7 @@ DEFAULT_NEURAL_NET_SETTINGS = {
 MINIMUM_TEMPERATURE_ACCEPTED = 0.2
 
 # How many seconds to think on a move while training
-DEFAULT_TRAIN_THINK_TIME = 0.5
+DEFAULT_TRAIN_THINK_TIME = 0.3
 
 # The maximum number of positions to save
 MEMORY_SIZE = 2000
