@@ -94,8 +94,8 @@ class MCTS():
     def stats(self):
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
-        inf['prediction'] = self.root_node.V[0]
-        inf['Q'] = self.root_node.get_Q()
+        inf['nn_value'] = self.root_node.V[0]
+        inf['mcts_value'] = self.root_node.get_Q()[0]
         inf['n'] = self.root_node.N
         inf['node/s'] = self.root_node.N / self.seconds
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
