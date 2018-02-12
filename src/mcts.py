@@ -47,13 +47,15 @@ class MCTS():
 
 
     def select(self, node):
-        side = node.state.turn()
-        scores = np.array([self.UCT_score(child,i,node) for i,child in enumerate(node.children)])
+        s = node.state
+        side = s.turn()
+        val_moves = s.valid_moves()
+        scores = np.array([self.UCT_score(node.get_child(move),move,node) for move in val_moves])
         if side == Player.A:
             best_index = np.argmax(scores)
         else:
             best_index = np.argmin(scores)
-        return best_index
+        return val_moves[best_index]
 
     def UCT_score(self, node, index, parent):
         if node is not None:

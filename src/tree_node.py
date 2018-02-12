@@ -73,8 +73,8 @@ class Node(object):
     def is_leaf(self):
         return len(self.children) == 0
 
-    def get_child(self,index):
-        return self.children[index]
+    def get_child(self,move):
+        return self.children[move]
 
     def get_Q(self):
             return self.Q

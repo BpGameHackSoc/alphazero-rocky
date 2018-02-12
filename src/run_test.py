@@ -8,6 +8,6 @@ from src.games.gomoku.config import BOARD_SIZE
 b = GomokuNN()
 g = GomokuState()
 n = tree_node.Node(g, BOARD_SIZE*BOARD_SIZE)
-ts = mcts.MCTS(b, time=3)
-root = ts.search(n,3)
+ts = mcts.MCTS(b, time=10)
+root = ts.search(n)
 pass
