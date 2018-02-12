@@ -44,16 +44,18 @@ class Node(object):
         self.children = [None] * max_no_children # The child-states  TODO replace with config value
         self.children_p = []        # The probability distribution on child states
 
-    # def max_depth(self):
-    #     if self.state.is_over() or not self.visited():
-    #         return 0
-    #     else:
-    #         m = 0
-    #         for child in self.children:
-    #             current = child.max_depth()
-    #             if current > m:
-    #                 m = current
-    #         return m + 1
+    def max_depth(self):
+        if self.state.is_over() or self.is_leaf():
+            return 0
+        else:
+            m = 0
+            for child in self.children:
+                if child is None:
+                    continue
+                current = child.max_depth()
+                if current > m:
+                    m = current
+            return m + 1
 
     def evaluate(self, model, back_prop_real=False):
         is_game_over = self.state.is_over()
