@@ -34,7 +34,7 @@ class Trainer(object):
             move = self.best_student.move(state, temp=temp, root=root)
             probabilities = self.best_student.last_run['probabilities']
             root = self.student.last_run['chosen_child']
-            self.observations.extend(state.to_input(probabilities))
+            self.observations.extend(state.to_all_symmetry_input(probabilities))
             state = state.move(move)
 
         # Update value as: 1 for winner, -1 for losers, 0 for draw

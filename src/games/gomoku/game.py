@@ -67,18 +67,18 @@ class GomokuState(GameState):
         return Color.NONE
 
 
-    def to_input(self, p):
+    def to_all_symmetry_input(self, p):
         transformations = []
         p = p.reshape(BOARD_SIZE, BOARD_SIZE)
         for i in range(4):
             rotated_board = np.rot90(self.board, i)
             rotated_p = np.rot90(p, i)
-            one_input = [self.__board_to_input(rotated_board),
+            one_input = [self.to_input(rotated_board),
                          self.turn_color.value, rotated_p.reshape(-1)]
             transformations.append(one_input)
             flipped_board = rotated_board.transpose()
             flipped_p = rotated_p.transpose()
-            one_input = [self.__board_to_input(flipped_board),
+            one_input = [self.to_input(flipped_board),
                          self.turn_color.value, flipped_p.reshape(-1)]
             transformations.append(one_input)
         return transformations
@@ -95,7 +95,7 @@ class GomokuState(GameState):
     def swap_turn(self):
         self.turn_color = Color(self.turn_color.value * -1)
 
-    def __board_to_input(self, board):
+    def to_input(self, board):
         x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
         x[0][board == self.turn_color.value] = 1
         x[1][board == -1 * self.turn_color.value] = 1
