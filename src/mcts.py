@@ -49,26 +49,30 @@ class MCTS():
 
 
     def select(self, node):
-        s = node.state
-        side = s.turn()
-        val_moves = s.valid_moves()
+        val_moves = node.state.valid_moves()
         scores = np.array([self.UCT_score(node.get_child(move),move,node) for move in val_moves])
-        if side == Player.A:
-            best_index = np.argmax(scores)
-        else:
-            best_index = np.argmin(scores)
+        best_index = np.argmax(scores)
         return val_moves[best_index]
 
     def UCT_score(self, node, index, parent):
         if node is not None:
-            return node.get_Q() + Node.C * node.get_p() * math.sqrt(parent.get_N()) / (node.get_N()+1)
+            s = node.state
+            side = s.turn()
+            if side == Player.A:
+                q = node.get_Q()
+            else:
+                q = -node.get_Q()
+            return q + Node.C * node.get_p() * math.sqrt(parent.get_N()) / (node.get_N()+1)
         else:
             return Node.C * parent.children_p[index] * math.sqrt(parent.get_N())
 
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
         for i, child in enumerate(node.children):
-            ranks[i] = child.N
+            if child is None:
+                ranks[i] = 0
+            else:
+                ranks[i] = child.N
         return ranks
 
     def get_playing_move(self, parent_node, explore_temp=2):
@@ -97,7 +101,7 @@ class MCTS():
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
         inf['nn_value'] = self.root_node.V[0]
-        inf['mcts_value'] = self.root_node.get_Q()[0]
+        inf['mcts_value'] = self.root_node.Q[0]
         inf['n'] = self.root_node.N
         inf['node/s'] = self.root_node.N / self.seconds
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()

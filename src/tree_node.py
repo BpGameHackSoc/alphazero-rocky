@@ -23,7 +23,7 @@ class Node(object):
 
     def define_child(self, move):
         new_state = self.state.move(move)
-        self.children[move] = Node(new_state, len(self.children), self.children_p[move], self)
+        self.children[move] = type(self)(new_state, len(self.children), self.children_p[move], self)
         return self.children[move]
 
     def expand_and_evaluate(self,move,model):
@@ -67,6 +67,7 @@ class Node(object):
             s = self.state.to_input()
             v, p = model.predict(np.expand_dims(s, axis=0))
             v = v.flatten()
+            self.V = v
             self.update_values(v)
             if not is_game_over:
                 self.children_p = p.flatten()
@@ -84,20 +85,24 @@ class Node(object):
     def get_p(self):
         return self.p
 
+    # def set_V(self,v):
+    #     if self.parent is None:
+    #         pass
+    #     self.V = v
+
     def get_N(self):
         return self.N
 
     def update_values(self, z_estimate):
         self.__increment_N()
         self.__add_to_W(z_estimate)
-        self.__calc_Q()
-        self.V = z_estimate
+        self.calc_Q()
 
     def get_V(self):
         return self.V
 
 
-    def __calc_Q(self):
+    def calc_Q(self):
         self.Q = self.W / self.N
 
     def __increment_N(self):
@@ -129,8 +134,8 @@ class Node_threaded(Node):
     """
     constant members: state, parent
     """
-    def __init__(self, gomoku, move, parent, p):
-        super().__init__(gomoku, move, parent, p)
+    def __init__(self, state, max_no_children, p=0, parent=None):
+        super().__init__(state, max_no_children, p, parent)
         self.update_lock = threading.RLock()
         # self.creation_lock = threading.Lock()
 

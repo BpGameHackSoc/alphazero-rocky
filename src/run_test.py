@@ -7,7 +7,17 @@ from src.games.gomoku.config import BOARD_SIZE
 # Get info about how fast the MCTS is
 b = GomokuNN()
 g = GomokuState()
-n = tree_node.Node(g, BOARD_SIZE*BOARD_SIZE)
-ts = mcts_treaded.MCTS_threaded(b, time=10)
-root = ts.search(n)
+time = 2
+threads = True
+if threads:
+    n = tree_node.Node_threaded(g, BOARD_SIZE*BOARD_SIZE)
+    ts = mcts_treaded.MCTS_threaded(b, time=time)
+    for i in range(1,100,20):
+        root = ts.search(n,threads=i)
+        print(ts.stats())
+else:
+    n = tree_node.Node(g, BOARD_SIZE*BOARD_SIZE)
+    ts = mcts.MCTS(b, time=time)
+    root = ts.search(n)
+    print(ts.stats())
 pass
