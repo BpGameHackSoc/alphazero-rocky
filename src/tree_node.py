@@ -16,6 +16,7 @@ def config(self):
     self.children_p = probabilities.flatten()
     self.children = [None] * self.children_p.size
 
+use_terminal_score = True
 class Node(object):
     """
     Responsible for keeping the data of tree node for Monte-Carlo Tree Search
@@ -59,7 +60,7 @@ class Node(object):
 
     def evaluate(self, model, back_prop_real=False):
         is_game_over = self.state.is_over()
-        if is_game_over and back_prop_real:
+        if is_game_over and use_terminal_score:
             z = self.get_terminal_score()
             self.update_values(z)
             self.is_terminal = True
@@ -134,8 +135,8 @@ class Node_threaded(Node):
     """
     constant members: state, parent
     """
-    def __init__(self, state, max_no_children, p=0, parent=None):
-        super().__init__(state, max_no_children, p, parent)
+    def __init__(self, state, p=0, parent=None):
+        super().__init__(state, p, parent)
         self.update_lock = threading.RLock()
         # self.creation_lock = threading.Lock()
 

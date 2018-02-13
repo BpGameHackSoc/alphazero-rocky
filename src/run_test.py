@@ -10,9 +10,9 @@ g = GomokuState()
 time = 2
 threads = True
 if threads:
-    n = tree_node.Node_threaded(g, BOARD_SIZE*BOARD_SIZE)
-    ts = mcts_treaded.MCTS_threaded(b, time=time)
     for i in range(1,100,20):
+        n = tree_node.Node_threaded(g)
+        ts = mcts_treaded.MCTS_threaded(b, time=time)
         root = ts.search(n,threads=i)
         print(ts.stats())
 else:
