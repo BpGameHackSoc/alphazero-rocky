@@ -94,10 +94,7 @@ class Node(object):
     def get_N(self):
         return self.N
 
-    def update_values(self, z_estimate, side=None):
-        node_side = self.state.turn()
-        if node_side!=side:
-            z_estimate *= -1
+    def update_values(self, z_estimate):
         self.__increment_N()
         self.__add_to_W(z_estimate)
         self.calc_Q()

@@ -102,9 +102,8 @@ class MCTS():
 
     def backpropagation(self, node,nodes_visited):
         v = node.get_V()
-        side = node.state.turn()
         for node_inner in nodes_visited:
-            node_inner.update_values(v,side)
+            node_inner.update_values(v)
 
 
     def stats(self):
