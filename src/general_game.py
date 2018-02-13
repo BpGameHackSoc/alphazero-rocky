@@ -55,10 +55,32 @@ class GameState(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def board_size(self):
+        '''
+            Returns with the size of the board.
+        '''
+        pass
+
+    @abc.abstractmethod
+    def action_space_size(self):
+        '''
+            Returns with the number of possible moves
+            (excluding the fact if they are valid or not)
+        '''
+        pass
+
+    @abc.abstractmethod
     def is_over(self):
         '''
             Checks if the game is over.
                 return: [True/False]
+        '''
+        pass
+
+    @abc.abstractmethod
+    def copy(self):
+        '''
+            Returns a copy of this object
         '''
         pass
 
@@ -80,12 +102,22 @@ class GameState(abc.ABC):
                 [board, turn, castling_rights, en_passant, half_moves]
 
             Note this function must return with a numpy matrix as:
-                [[state, (int) player_on_turn, probabilities]
-                 [state, (int) player_on_turn, probabilities]
-                 [state, (int) player_on_turn, probabilities]]
+                [state, (int) player_on_turn, probabilities]
 
             The idea behind this method is that the board in some games such as othello
             or go can be be rotated or flipped.
 
+        '''
+        pass
+
+    @abc.abstractmethod
+    def to_all_symmetry_input(self, probabilities):
+        '''
+            Returns with the same as to_input, but all possible rotations & flips,
+            along with flipping the move probabilities. Output should look like:
+               [[state, (int) player_on_turn, probabilities]
+                [state, (int) player_on_turn, probabilities]
+                [state, (int) player_on_turn, probabilities]
+                [state, (int) player_on_turn, probabilities]]
         '''
         pass

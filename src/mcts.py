@@ -16,9 +16,20 @@ class MCTS():
         self.model = model
         self.time_limit = datetime.timedelta(seconds=self.seconds)
 
-    def search(self, root_node, simulation_limit=None):
+    def search(self, **kwargs):
+        limit = kwargs.get('limit', None)
+        root = kwargs.get('root', None)
+        state = kwargs.get('state', None)
+        if not root is None:
+            root.parent = None
+            return self.search_node(root, simulation_limit=limit)
+        if not state is None:
+            root = Node(state)
+            return self.search_node(root, simulation_limit=limit)
+        raise Exception('Invalid MCTS search arguments')
+
+    def search_node(self, root_node, simulation_limit=None):
         self.root_node = root_node
-        self.root_node.parent = None
         if not root_node.is_visited():
             root_node.evaluate(self.model)
         if simulation_limit is None:
@@ -69,9 +80,7 @@ class MCTS():
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
         for i, child in enumerate(node.children):
-            if child is None:
-                ranks[i] = 0
-            else:
+            if not child is None:
                 ranks[i] = child.N
         return ranks
 

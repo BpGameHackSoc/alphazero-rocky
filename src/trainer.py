@@ -5,17 +5,21 @@ from src.games.gomoku.neural_net import GomokuNN
 from src.config import *
 import src.games.gomoku.config as gomoku_config
 from collections import deque
-from copy
+
+import src.agents.student
+from importlib import reload
+reload(src.agents.student)
+from src.agents.student import StudentAgent
 
 class Trainer(object):
     def __init__(self, game_type, model_path=None):
         self.game_type = game_type
-        self.model_path = model_path
-        self.config()
+        self.model_path = model_path  
         self.iterations = NO_OF_ITERATIONS
-        self.episodes = NO_OF_EPOSIDES
+        self.episodes = NO_OF_EPISODES
         self.memory_size = MEMORY_SIZE
         self.observations = deque(maxlen=self.memory_size)
+        self.config()
 
     def config(self):
         if self.game_type == 'gomoku':
@@ -26,15 +30,15 @@ class Trainer(object):
             self.temp_decay = gomoku_config.TEMP_DECAY
 
     def play_one_episode(self):
-        state = self.start_state
+        state = self.start_state.copy()
         observations = deque()
         root = None
         while not state.is_over():
             temp = self.__temperature(state.move_count())
             move = self.best_student.move(state, temp=temp, root=root)
             probabilities = self.best_student.last_run['probabilities']
-            root = self.student.last_run['chosen_child']
-            self.observations.extend(state.to_all_symmetry_input(probabilities))
+            root = self.best_student.last_run['chosen_child']
+            observations.extend(state.to_all_symmetry_input(probabilities))
             state = state.move(move)
 
         # Update value as: 1 for winner, -1 for losers, 0 for draw
@@ -45,7 +49,7 @@ class Trainer(object):
 
     def learn(self):
         for i in range(self.iterations):
-            print(' *** ITERATION : ' + str(i+!) + ' ***')
+            print(' *** ITERATION : ' + str(i+1) + ' ***')
             for j in range(self.episodes):
                 self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()

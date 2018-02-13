@@ -66,6 +66,11 @@ class GomokuState(GameState):
                     return winner
         return Color.NONE
 
+    def board_size(self):
+        return BOARD_SIZE
+
+    def action_space_size(self):
+        return BOARD_SIZE * BOARD_SIZE
 
     def to_all_symmetry_input(self, p):
         transformations = []
@@ -95,10 +100,11 @@ class GomokuState(GameState):
     def swap_turn(self):
         self.turn_color = Color(self.turn_color.value * -1)
 
-    def to_input(self):
+    def to_input(self, board=None):
+        board = self.board if board is None else board
         x = np.zeros(shape=(2, BOARD_SIZE, BOARD_SIZE))
-        x[0][self.board == self.turn_color.value] = 1
-        x[1][self.board == -1 * self.turn_color.value] = 1
+        x[0][board == self.turn_color.value] = 1
+        x[1][board == -1 * self.turn_color.value] = 1
         return x
 
     def __crop(self):
