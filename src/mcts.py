@@ -42,21 +42,19 @@ class MCTS():
         return self.root_node
 
     def run_one_simulation(self):
-        last_node, nodes_visited = self.simulate_to_leaf()
-        self.backpropagation(last_node,nodes_visited)
+        last_node = self.simulate_to_leaf()
+        self.backpropagation(last_node)
 
     def simulate_to_leaf(self):
-        nodes_visited = []
         node = self.root_node
-        while not node.is_terminal():
-            nodes_visited.append(node)
+        while not node.is_terminal:
             move_index = self.select(node)
             new_node = node.children[move_index]
             if new_node is None:
                 node = node.expand_and_evaluate(move_index,self.model)
                 break
             node = new_node
-        return (node,nodes_visited)
+        return node
 
 
     def select(self, node):
@@ -100,17 +98,20 @@ class MCTS():
             move_index = ranks.argmax()
         return parent_node.get_child(move_index)
 
-    def backpropagation(self, node,nodes_visited):
+    def backpropagation(self, node):
         v = node.get_V()
-        for node_inner in nodes_visited:
-            node_inner.update_values(v)
+        while not node is None:
+            node.update_values(v)
+            node = node.parent
+        #for node_inner in nodes_visited:
+            #node_inner.update_values(v)
 
 
     def stats(self):
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
-        inf['nn_value'] = self.root_node.V[0]
-        inf['mcts_value'] = self.root_node.Q[0]
+        inf['nn_value'] = self.root_node.V[0] * -1
+        inf['mcts_value'] = self.root_node.Q[0] * -1
         inf['n'] = self.root_node.N
         inf['node/s'] = self.root_node.N / self.seconds
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()

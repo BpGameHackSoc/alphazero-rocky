@@ -44,6 +44,7 @@ class Node(object):
         self.Q = 0
         self.children = [None] * state.action_space_size() # The child-states  TODO replace with config value
         self.children_p = []        # The probability distribution on child states
+        self.is_terminal = False
 
     def max_depth(self):
         if self.state.is_over() or self.is_leaf():
@@ -58,10 +59,11 @@ class Node(object):
                     m = current
             return m + 1
 
-    def evaluate(self, model, back_prop_real=False):
+    def evaluate(self, model, back_prop_real=True):
         is_game_over = self.state.is_over()
         if is_game_over and use_terminal_score:
             z = self.get_terminal_score()
+            self.V = z
             self.update_values(z)
             self.is_terminal = True
         else:

@@ -14,10 +14,22 @@ class MCTS_threaded(MCTS):
     def __init__(self, model, **kwargs):
         super().__init__(model, **kwargs)
 
+    def search(self, **kwargs):
+        limit = kwargs.get('limit', None)
+        root = kwargs.get('root', None)
+        state = kwargs.get('state', None)
+        threads = kwargs.get('threads', None)
+        if not root is None:
+            root.parent = None
+            return self.search_node(root, threads=threads, simulation_limit=limit)
+        if not state is None:
+            root = Node_threaded(state)
+            return self.search_node(root, threads=threads, simulation_limit=limit)
+        raise Exception('Invalid MCTS search arguments')
 
-    def search(self, root_node, threads = 1,simulation_limit=None):
+
+    def search_node(self, root_node, threads = 1, simulation_limit=None):
         self.root_node = root_node
-        self.root_node.parent = None
         if not root_node.is_visited():
             root_node.evaluate(self.model)
         futures = []
@@ -33,7 +45,7 @@ class MCTS_threaded(MCTS):
     def simulate_to_leaf(self):
         nodes_visited = []
         node = self.root_node
-        while not node.is_terminal():
+        while not node.is_terminal:
             with node.update_lock:
                 node.update_values(-1) #virtual loss
                 nodes_visited.append(node)
