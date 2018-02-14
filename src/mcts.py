@@ -2,12 +2,12 @@ import datetime
 import numpy as np
 import math
 from src.general_player import Player
+
+from importlib import reload
+import src.tree_node
+reload(src.tree_node)
+
 from src.tree_node import Node
-
-
-
-
-
 
 class MCTS():
     def __init__(self, model, **kwargs):
@@ -51,7 +51,7 @@ class MCTS():
             move_index = self.select(node)
             new_node = node.children[move_index]
             if new_node is None:
-                node = node.expand_and_evaluate(move_index,self.model)
+                node = node.expand_and_evaluate(move_index, self.model)
                 break
             node = new_node
         return node
@@ -59,21 +59,17 @@ class MCTS():
 
     def select(self, node):
         val_moves = node.state.valid_moves()
-        scores = np.array([self.UCT_score(node.get_child(move),move,node) for move in val_moves])
+        scores = np.array([self.UCT_score(node, move) for move in val_moves])
         best_index = np.argmax(scores)
         return val_moves[best_index]
 
-    def UCT_score(self, node, index, parent):
+    def UCT_score(self, parent, index):
+        node = parent.children[index]
         if node is not None:
-            s = node.state
-            side = s.turn()
-            if side == Player.A:
-                q = node.get_Q()
-            else:
-                q = -node.get_Q()
-            return q + Node.C * node.get_p() * math.sqrt(parent.get_N()) / (node.get_N()+1)
+            q = node.Q if node.state.turn() == Player.A else -node.Q
+            return q + Node.C * node.p * math.sqrt(parent.N) / (node.N+1)
         else:
-            return Node.C * parent.children_p[index] * math.sqrt(parent.get_N())
+            return Node.C * parent.children_p[index] * math.sqrt(parent.N)
 
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
@@ -99,19 +95,17 @@ class MCTS():
         return parent_node.get_child(move_index)
 
     def backpropagation(self, node):
-        v = node.get_V()
+        v = node.V
         while not node is None:
             node.update_values(v)
             node = node.parent
-        #for node_inner in nodes_visited:
-            #node_inner.update_values(v)
 
 
     def stats(self):
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
-        inf['nn_value'] = self.root_node.V[0] * -1
-        inf['mcts_value'] = self.root_node.Q[0] * -1
+        inf['nn_value'] = self.root_node.V * -1
+        inf['mcts_value'] = self.root_node.Q * -1
         inf['n'] = self.root_node.N
         inf['node/s'] = self.root_node.N / self.seconds
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
