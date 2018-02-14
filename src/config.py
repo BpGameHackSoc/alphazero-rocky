@@ -29,16 +29,15 @@ DEFAULT_NEURAL_NET_SETTINGS = {
 MINIMUM_TEMPERATURE_ACCEPTED = 0.2
 
 # How many seconds to think on a move while training
-DEFAULT_TRAIN_THINK_TIME = 0.3
+DEFAULT_TRAIN_THINK_TIME = 0.2
 
 # The maximum number of positions to save
 MEMORY_SIZE = 2000
 
-NO_OF_EPISODES = 20
-NO_OF_ITERATIONS = 100
-NO_OF_GAMES_TO_BATTLE = 30
+NO_OF_EPISODES = 10
+NO_OF_ITERATIONS = 5
+NO_OF_GAMES_TO_BATTLE = 10
 SAVE_THRESHOLD = 0.55
-
 
 
 # These variables must be overridden in the game's config files

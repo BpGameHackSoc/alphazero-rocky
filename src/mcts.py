@@ -2,6 +2,7 @@ import datetime
 import numpy as np
 import math
 from src.general_player import Player
+from src.config import MINIMUM_TEMPERATURE_ACCEPTED, DEFAULT_TRAIN_THINK_TIME
 
 from importlib import reload
 import src.tree_node
@@ -11,7 +12,7 @@ from src.tree_node import Node
 
 class MCTS():
     def __init__(self, model, **kwargs):
-        self.seconds = kwargs.get('time', 3)
+        self.seconds = kwargs.get('time', DEFAULT_TRAIN_THINK_TIME)
         self.learning = kwargs.get('learning', False)
         self.model = model
         self.time_limit = datetime.timedelta(seconds=self.seconds)
@@ -32,6 +33,7 @@ class MCTS():
         self.root_node = root_node
         if not root_node.is_visited():
             root_node.evaluate(self.model)
+        self.__add_dirichlet_noise()
         if simulation_limit is None:
             begin = datetime.datetime.utcnow()
             while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
@@ -40,6 +42,11 @@ class MCTS():
             for i in range(simulation_limit):
                 self.run_one_simulation()
         return self.root_node
+
+    def __add_dirichlet_noise(self):
+        n = self.root_node.state.action_space_size()
+        self.root_node.children_p = (0.75 * self.root_node.children_p +
+                                     0.25 * np.random.dirichlet([1./n] * n))
 
     def run_one_simulation(self):
         last_node = self.simulate_to_leaf()
@@ -78,21 +85,23 @@ class MCTS():
                 ranks[i] = child.N
         return ranks
 
-    def get_playing_move(self, parent_node, explore_temp=2):
+    def get_playing_move(self, explore_temp=2):
         """
-
         :param parent_node: where moves are calculated from
         :param explore_temp: Controls the willingness to explore similar to softmax scaling
         :return: node after the calculated move
         """
         ranks = self.rank_moves(self.root_node).astype(float)
-        ranks = ranks ** explore_temp
-        ranks /= ranks.sum()
-        if self.learning:
-            move_index = int(np.random.choice(range(len(ranks),0), 1, p=ranks))
+        if explore_temp < MINIMUM_TEMPERATURE_ACCEPTED:
+            explore_temp = 0
+        else:
+            ranks = ranks ** explore_temp
+            ranks /= ranks.sum()
+        if self.learning and explore_temp > 0:
+            move_index = int(np.random.choice(np.arange(ranks.size), 1, p=ranks))
         else:
             move_index = ranks.argmax()
-        return parent_node.get_child(move_index)
+        return move_index
 
     def backpropagation(self, node):
         v = node.V

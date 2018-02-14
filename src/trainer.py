@@ -53,15 +53,18 @@ class Trainer(object):
             for j in range(self.episodes):
                 self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()
+            self.best_student.learning = False
+            self.challenger.learning = False
             arena = Arena(self.game_type, self.best_student, self.challenger)
             wins = arena.war(NO_OF_GAMES_TO_BATTLE)
-            if challanger_takes_crown(wins):
+            if self.challanger_takes_crown(wins):
                 print('Accepted!')
-                self.best_student = challenger
-                self.best_student.name = 'best_student'
-                self.best_student.nn.save(name=self.game_type+'_checkpoint_'+str(i))
+                self.best_student = self.challenger
+                self.best_student.name = 'best_student' 
+                self.best_student.nn.save(file_name=self.game_type+'_checkpoint_'+str(i+1))
             else:
                 print('Rejected!')
+            self.best_student.learning = True
         print('Learning has finished.')
 
 

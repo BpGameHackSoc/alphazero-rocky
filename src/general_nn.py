@@ -5,6 +5,7 @@ from keras.layers.merge import Add
 from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
 from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
+import numpy as np
 
 class NeuralNetwork(abc.ABC):
     @abc.abstractmethod

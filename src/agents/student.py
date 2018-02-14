@@ -11,9 +11,10 @@ class StudentAgent(Agent):
 
     def __init__(self, neural_net, **kwargs):
         self.name = kwargs.get('name', 'student')
+        self.learning = kwargs.get('learning', True)
         self.think_time = kwargs.get('think_time', DEFAULT_TRAIN_THINK_TIME)
         self.nn = neural_net
-        self.mcts = MCTS(neural_net, think_time=self.think_time)
+        self.mcts = MCTS(neural_net, learning=self.learning, think_time=self.think_time)
         self.last_run = {}
 
     def move(self, state, **kwargs):
@@ -22,33 +23,21 @@ class StudentAgent(Agent):
         root = self.mcts.search(root=pre_known_node, state=state)
         visit_counts = self.mcts.rank_moves(root)
         probabilities = visit_counts / float(visit_counts.sum())
-        valid = state.valid_moves()
-        distribution = probabilities[valid]
-        if temp < MINIMUM_TEMPERATURE_ACCEPTED:
-            move = valid[distribution.argmax()]
-            self.last_run['probabilities'] = probabilities
-            self.last_run['chosen_child'] = root.children[move]
-            return move
-        else:
-            real_distribution = self.calculate_real_distribution(distribution, temp)
-            move = np.random.choice(valid, p=real_distribution)
-            self.last_run['probabilities'] = probabilities
-            self.last_run['chosen_child'] = root.children[move]
-
+        move = self.mcts.get_playing_move(temp)
+        self.last_run['probabilities'] = probabilities
+        self.last_run['chosen_child'] = root.children[move]
         return move
 
-    def evaluate(self, state, visit_count_distribution, temp):
+    def evaluate(self, state, **kwargs):
         if not state.is_over():
             print('Valid moves:' + str(state.valid_moves()))
-            print('Visits:' + str(state.valid_moves()))
-            if temp < MINIMUM_TEMPERATURE_ACCEPTED:
-                print('Temp was lower than ' + str(MINIMUM_TEMPERATURE_ACCEPTED))
-            else:
-                valid = state.valid_moves()
-                distribution = visit_count_distribution[valid]
-                real_distribution = self.calculate_real_distribution(distribution, temp)
-                print('Distribution: ' + real_distribution)
-
+            temp = kwargs.get('temp', 0)
+            root = self.mcts.search(state=state)
+            visit_counts = self.mcts.rank_moves(root)
+            move = self.mcts.get_playing_move(temp)
+            print('Visits:' + str(visit_counts))
+            print('Temp:' + str(temp))
+            print('Move: '+ str(move))
 
     def calculate_real_distribution(self, visit_count_distribution, temp):
         distribution = visit_count_distribution ** temp
