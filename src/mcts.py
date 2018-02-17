@@ -45,8 +45,8 @@ class MCTS():
 
     def __add_dirichlet_noise(self):
         n = self.root_node.state.action_space_size()
-        self.root_node.children_p = (0.75 * self.root_node.children_p +
-                                     0.25 * np.random.dirichlet([1./n] * n))
+        self.root_node.children_p = (0.8 * self.root_node.children_p +
+                                     0.2 * np.random.dirichlet([1./n] * n))
 
     def run_one_simulation(self):
         last_node = self.simulate_to_leaf()
@@ -73,10 +73,9 @@ class MCTS():
     def UCT_score(self, parent, index):
         node = parent.children[index]
         if node is not None:
-            q = node.Q if node.state.turn() == Player.A else -node.Q
-            return q + Node.C * node.p * math.sqrt(parent.N) / (node.N+1)
+            return node.Q + Node.C * node.p * parent.N / node.N+1
         else:
-            return Node.C * parent.children_p[index] * math.sqrt(parent.N)
+            return Node.C * parent.children_p[index] * parent.N
 
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
@@ -106,6 +105,9 @@ class MCTS():
     def backpropagation(self, node):
         v = node.V
         while not node is None:
+            parent_turn = node.state.turn() if node.parent is None else node.parent.state.turn()
+            partition = (int(parent_turn==node.state.turn())-0.5)*2
+            v *= partition
             node.update_values(v)
             node = node.parent
 
@@ -113,8 +115,8 @@ class MCTS():
     def stats(self):
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
-        inf['nn_value'] = self.root_node.V * -1
-        inf['mcts_value'] = self.root_node.Q * -1
+        inf['nn_value'] = self.root_node.V
+        inf['win_chance'] = self.root_node.Q/2.+0.5
         inf['n'] = self.root_node.N
         inf['node/s'] = self.root_node.N / self.seconds
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()

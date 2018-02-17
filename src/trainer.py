@@ -5,6 +5,7 @@ from src.games.gomoku.neural_net import GomokuNN
 from src.config import *
 import src.games.gomoku.config as gomoku_config
 from collections import deque
+import pickle
 
 import src.agents.student
 from importlib import reload
@@ -12,13 +13,14 @@ reload(src.agents.student)
 from src.agents.student import StudentAgent
 
 class Trainer(object):
-    def __init__(self, game_type, model_path=None):
+    def __init__(self, game_type, model_path=None, memory_path=None):
         self.game_type = game_type
         self.model_path = model_path  
         self.iterations = NO_OF_ITERATIONS
         self.episodes = NO_OF_EPISODES
         self.memory_size = MEMORY_SIZE
-        self.observations = deque(maxlen=self.memory_size)
+        self.no_of_games_played = self.__get_no_of_games_played(model_path)
+        self.observations = self.__get_initial_observations(memory_path)
         self.config()
 
     def config(self):
@@ -33,6 +35,7 @@ class Trainer(object):
         state = self.start_state.copy()
         observations = deque()
         root = None
+        possible_move_len = state.action_space_size()
         while not state.is_over():
             temp = self.__temperature(state.move_count())
             move = self.best_student.move(state, temp=temp, root=root)
@@ -41,6 +44,10 @@ class Trainer(object):
             observations.extend(state.to_all_symmetry_input(probabilities))
             state = state.move(move)
 
+        # Saving last state in order determine what means winning
+        probabilities = np.full((possible_move_len, ), 1./possible_move_len)
+        observations.extend(state.to_all_symmetry_input(probabilities))
+
         # Update value as: 1 for winner, -1 for losers, 0 for draw
         winner = state.winner()
         for i in range(len(observations)):
@@ -48,7 +55,8 @@ class Trainer(object):
         return observations
 
     def learn(self):
-        for i in range(self.iterations):
+        n = self.no_of_games_played
+        for i in range(n, n + self.iterations):
             print(' *** ITERATION : ' + str(i+1) + ' ***')
             for j in range(self.episodes):
                 self.observations.extend(self.play_one_episode())
@@ -66,6 +74,7 @@ class Trainer(object):
                 print('Rejected!')
             self.best_student.learning = True
         print('Learning has finished.')
+        self.save_memory = self.__save_memory('memory_' + str(n+self.iterations))
 
 
     def challanger_takes_crown(self, wins):
@@ -83,6 +92,32 @@ class Trainer(object):
         challenger = StudentAgent(challenger_nn, think_time=think_time, name='challenger')
         return challenger
 
+    def __save_memory(self, file_name):
+        path = WORK_FOLDER + file_name + '.p'
+        pickle.dump(self.observations, open(path, "wb" ))
+        print('Memory saved at ' + path)
+
+
+    def __get_no_of_games_played(self, s):
+        if s == None:
+            return 0
+        tofind = 'checkpoint_'
+        loc = s.find('checkpoint_')
+        if loc == -1:
+            return 0
+        else:
+            return int(s[len(tofind)+loc:])
+        if self.game_type == 'gomoku':
+            return GomokuNN(model_name=model_name)
+
+    def __get_initial_observations(self, memory_name):
+        observations = deque(maxlen=self.memory_size)
+        if memory_name is None:
+            return observations
+        path = WORK_FOLDER + memory_name + '.p'
+        old_observations = pickle.load(open(path, "rb" ))
+        observations.extend(old_observations)
+        return observations
 
     def __load_appropriate_nn(self, model_name):
         if self.game_type == 'gomoku':
