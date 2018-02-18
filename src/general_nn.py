@@ -114,9 +114,14 @@ class NeuralNetwork(abc.ABC):
         self.model.save(path)
         if to_print:
             print('Model saved in ' + path)
+        return path
 
     def load(self, file_name):
         self.model = load_model(WORK_FOLDER + file_name + '.h5')
+
+    def clone(self):
+        self.save('temp', to_print=False)
+        return type(self)(model_name='temp')
 
     def __random_string(self, n):
         return ''.join(np.random.choice(list(string.ascii_lowercase+ string.digits), n))

@@ -54,3 +54,10 @@ class StudentAgent(Agent):
         distribution = visit_count_distribution ** temp
         distribution = distribution / distribution.sum()
         return distribution
+
+    def clone(self,nn_path=None):
+        if nn_path is not None:
+            copy_nn = type(self.nn)(nn_path)
+        else:
+            copy_nn = self.nn.clone()
+        return StudentAgent(copy_nn,think_time=self.think_time,name=self.name+'_cl')
