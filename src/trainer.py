@@ -73,10 +73,10 @@ class Trainer(object):
                     futures = []
                     min_work = int(self.episodes/threads) #divide work between processes evenly
                     work_boundary = self.episodes % threads
+                    work = min_work
+                    if i < work_boundary:
+                        work += 1
                     for i in range(threads):
-                        work = min_work
-                        if i<work_boundary:
-                            work+=1
                         st = deepcopy(self.start_state)
                         tt = deepcopy(self.temp_threshold)
                         td = deepcopy(self.temp_decay)
