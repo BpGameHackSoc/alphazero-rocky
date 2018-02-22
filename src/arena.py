@@ -1,4 +1,5 @@
 from src.games.gomoku.game import GomokuState
+from src.games.gomoku3d.game import Gomoku3dState
 import numpy as np
 
 class Arena(object):
@@ -65,4 +66,6 @@ class Arena(object):
         '''
         if self.game_type == 'gomoku':
             return GomokuState()
+        if self.game_type == 'gomoku3d':
+            return Gomoku3dState()
         raise Exception('Unknown game: ' + str(self.game_type))

@@ -1,9 +1,12 @@
 import numpy as np
 from src.arena import Arena
 from src.games.gomoku.game import GomokuState
+from src.games.gomoku3d.game import Gomoku3dState
 from src.games.gomoku.neural_net import GomokuNN
+from src.games.gomoku3d.neural_net import Gomoku3dNN
 from src.config import *
 import src.games.gomoku.config as gomoku_config
+import src.games.gomoku3d.config as gomoku3d_config
 from collections import deque
 import pickle
 
@@ -30,6 +33,12 @@ class Trainer(object):
             self.start_state = GomokuState()
             self.temp_threshold = gomoku_config.TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
+        if self.game_type == 'gomoku3d':
+            nn = Gomoku3dNN(self.model_path)
+            self.best_student = StudentAgent(nn, name='best_student')
+            self.start_state = Gomoku3dState()
+            self.temp_threshold = gomoku3d_config.TEMP_THRESHOLD
+            self.temp_decay = gomoku3d_config.TEMP_DECAY
 
     def play_one_episode(self):
         state = self.start_state.copy()
@@ -109,6 +118,8 @@ class Trainer(object):
             return int(s[len(tofind)+loc:])
         if self.game_type == 'gomoku':
             return GomokuNN(model_name=model_name)
+        if self.game_type == 'gomoku3d':
+            return Gomoku3dNN(model_name=model_name)
 
     def __get_initial_observations(self, memory_name):
         observations = deque(maxlen=self.memory_size)
@@ -122,6 +133,8 @@ class Trainer(object):
     def __load_appropriate_nn(self, model_name):
         if self.game_type == 'gomoku':
             return GomokuNN(model_name=model_name)
+        if self.game_type == 'gomoku3d':
+            return Gomoku3dNN(model_name=model_name)
 
     def __temperature(self, move_count):
         if move_count <= self.temp_threshold:

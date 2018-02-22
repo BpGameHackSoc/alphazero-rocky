@@ -6,9 +6,6 @@ class ThreadException(Exception):
     pass
 
 
-
-
-
 def config(self):
     value, probabilities = nn.predict(inp)
     self.V = value.flatten()[0]
@@ -16,13 +13,13 @@ def config(self):
     self.children_p = probabilities.flatten()
     self.children = [None] * self.children_p.size
 
-use_terminal_score = False
+use_terminal_score = True
 class Node(object):
     """
     Responsible for keeping the data of tree node for Monte-Carlo Tree Search
     """
 
-    C = math.sqrt(2)
+    C = 1
 
     def __init__(self, state, p=0, parent=None):
         self.state = state

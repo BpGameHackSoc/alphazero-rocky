@@ -2,7 +2,7 @@ import datetime
 import numpy as np
 import math
 from src.general_player import Player
-from src.config import MINIMUM_TEMPERATURE_ACCEPTED, DEFAULT_TRAIN_THINK_TIME
+from src.config import MINIMUM_TEMPERATURE_ACCEPTED, DEFAULT_TRAIN_THINK_TIME, DEFAULT_NUMBER_OF_SIMULATIONS
 
 from importlib import reload
 import src.tree_node
@@ -13,12 +13,13 @@ from src.tree_node import Node
 class MCTS():
     def __init__(self, model, **kwargs):
         self.seconds = kwargs.get('time', DEFAULT_TRAIN_THINK_TIME)
+        self.limit = kwargs.get('limit', DEFAULT_NUMBER_OF_SIMULATIONS)
         self.learning = kwargs.get('learning', False)
         self.model = model
         self.time_limit = datetime.timedelta(seconds=self.seconds)
 
     def search(self, **kwargs):
-        limit = kwargs.get('limit', None)
+        limit = kwargs.get('limit', self.limit)
         root = kwargs.get('root', None)
         state = kwargs.get('state', None)
         if not root is None:
@@ -45,8 +46,8 @@ class MCTS():
 
     def __add_dirichlet_noise(self):
         n = self.root_node.state.action_space_size()
-        self.root_node.children_p = (0.8 * self.root_node.children_p +
-                                     0.2 * np.random.dirichlet([1./n] * n))
+        self.root_node.children_p = (0.9 * self.root_node.children_p +
+                                     0.1 * np.random.dirichlet([1./n] * n))
 
     def run_one_simulation(self):
         last_node = self.simulate_to_leaf()

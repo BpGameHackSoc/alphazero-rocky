@@ -3,10 +3,10 @@
 # ==============================================================
 
 # The size of the board on its edge
-BOARD_SIZE = 15
+BOARD_SIZE = 4
 
 # A player needs to connect this many number on the board
-CONNECT_SIZE = 5
+CONNECT_SIZE = BOARD_SIZE
 
 # ==============================================================
 # NEURAL NET
@@ -14,9 +14,9 @@ CONNECT_SIZE = 5
 
 NEURAL_NET_SETTINGS = {
     'no_of_possible_actions' : BOARD_SIZE * BOARD_SIZE,
-    'filter_n' : 64,
-    'res_layer_n' : 3,
-    'input_shape' : (2,BOARD_SIZE,BOARD_SIZE),
+    'filter_n' : 128,
+    'res_layer_n' : 2,
+    'input_shape' : (BOARD_SIZE*2, BOARD_SIZE, BOARD_SIZE),
 }
 
 # ==============================================================
@@ -24,4 +24,4 @@ NEURAL_NET_SETTINGS = {
 # ==============================================================
 
 TEMP_THRESHOLD = BOARD_SIZE
-TEMP_DECAY = 1. / BOARD_SIZE
+TEMP_DECAY = 1. / 15

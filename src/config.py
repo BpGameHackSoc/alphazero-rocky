@@ -12,7 +12,7 @@ DEFAULT_NEURAL_NET_SETTINGS = {
     'filter_n' : 32,                     # The number of filters in a conv layer
     'kernel_size' : 3,
     'batch_size' : 32,                    
-    'epochs' : 5,
+    'epochs' : 4,
     'verbose' : 0,
     'validation_split' : 0.05,
     'input_shape' : None,
@@ -29,14 +29,15 @@ DEFAULT_NEURAL_NET_SETTINGS = {
 MINIMUM_TEMPERATURE_ACCEPTED = 0.2
 
 # How many seconds to think on a move while training
-DEFAULT_TRAIN_THINK_TIME = 0.5
+DEFAULT_TRAIN_THINK_TIME = 1.2
+DEFAULT_NUMBER_OF_SIMULATIONS = 1200
 
 # The maximum number of positions to save
-MEMORY_SIZE = 2000
+MEMORY_SIZE = 20000
 
-NO_OF_EPISODES = 10
+NO_OF_EPISODES = 25
 NO_OF_ITERATIONS = 30
-NO_OF_GAMES_TO_BATTLE = 5
+NO_OF_GAMES_TO_BATTLE = 10
 SAVE_THRESHOLD = 0.55
 
 
