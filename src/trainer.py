@@ -14,7 +14,7 @@ from copy import deepcopy
 
 parallelize_episodes=True
 if parallelize_episodes:
-    threads = 8
+    threads = 4
     import concurrent.futures
 
 class Trainer(object):
@@ -47,6 +47,7 @@ class Trainer(object):
             root = student.last_run['chosen_child']
             observations.extend(state.to_all_symmetry_input(probabilities))
             state = state.move(move)
+            print("PROCESS PLAYED A MOVE")
 
         # Update value as: 1 for winner, -1 for losers, 0 for draw
         winner = state.winner()
@@ -56,19 +57,28 @@ class Trainer(object):
 
     @staticmethod
     def process_play_episodes(num_of_episodes, nn_path, think_time,clone_name,start_state,temp_threshold,temp_decay):
-        clone_nn = GomokuNN(nn_path)
-        student =StudentAgent(clone_nn,think_time=think_time,name=clone_name)
-        observations = []
-        for i in range(num_of_episodes):
-            observations.extend(Trainer.play_one_episode(student,start_state,temp_threshold,temp_decay))
-        return observations
-
+        try:
+            print('Process started')
+            clone_nn = GomokuNN(nn_path)
+            student =StudentAgent(clone_nn,think_time=think_time,name=clone_name)
+            observations = []
+            for i in range(num_of_episodes):
+                observations.extend(Trainer.play_one_episode(student,start_state,temp_threshold,temp_decay))
+            print('Process finished, returning')
+            return observations
+        except Exception:
+            print('Process failed')
 
     def learn(self):
         for i in range(self.iterations):
             print(' *** ITERATION : ' + str(i+1) + ' ***')
             if parallelize_episodes:
-                self.best_student.nn.save('clone_nn')
+                file_name = 'clone_nn_4'
+                filenames=[]
+                for i in range(threads):
+                    filenames.append(file_name)
+                    self.best_student.nn.save(file_name)
+                    file_name+='a'
                 with concurrent.futures.ProcessPoolExecutor(max_workers=threads) as e:
                     futures = []
                     min_work = int(self.episodes/threads) #divide work between processes evenly
@@ -80,7 +90,14 @@ class Trainer(object):
                         st = deepcopy(self.start_state)
                         tt = deepcopy(self.temp_threshold)
                         td = deepcopy(self.temp_decay)
-                        futures.append(e.submit(Trainer.process_play_episodes,work,'clone_nn',self.best_student.name,self.best_student.think_time,st,tt,td))
+                        futures.append(e.submit(Trainer.process_play_episodes,work,filenames[i],self.best_student.name,self.best_student.think_time,st,tt,td))
+                    for future in concurrent.futures.as_completed(futures):
+                        try:
+                            data = future.result()
+                        except Exception as exc:
+                            print('Process generated an exception: %s' % ( exc,))
+                        else:
+                            print('Succesfully completed')
                     done_futures,_ = concurrent.futures.wait(futures) #wait until processes finish
                     for df in done_futures: #loop through the results
                         self.observations.extend(df.result())

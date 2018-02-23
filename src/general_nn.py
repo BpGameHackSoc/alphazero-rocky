@@ -118,6 +118,7 @@ class NeuralNetwork(abc.ABC):
 
     def load(self, file_name):
         self.model = load_model(WORK_FOLDER + file_name + '.h5')
+        pass
 
     def clone(self):
         self.save('temp', to_print=False)
