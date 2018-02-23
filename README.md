@@ -26,6 +26,7 @@ When a player normally looks at the board, she doesn't see black or white pieces
 ### Vanishing probabilities
 
 DeepMind used the following formula to guide AlphaZero in MCTS's selection phrase:
+
 ![alt math](https://i.imgur.com/jDvuQwY.png)
 
 [If you have troubles with understanding the formula, please find detailed explanation in their [paper](https://deepmind.com/documents/119/agz_unformatted_nature.pdf).]
