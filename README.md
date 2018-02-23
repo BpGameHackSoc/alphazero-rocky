@@ -26,7 +26,7 @@ When a player normally looks at the board, she doesn't see black or white pieces
 ### Vanishing probabilities
 
 DeepMind used the following formula to guide AlphaZero in MCTS's selection phrase:
-![alt math](https://imgur.com/jDvuQwY)
+![alt math](https://i.imgur.com/jDvuQwY.png)
 
 [If you have troubles with understanding the formula, please find detailed explanation in their [paper](https://deepmind.com/documents/119/agz_unformatted_nature.pdf).]
 Now, let's assume we train our engine at home, so we cannot afford 1600 simulations as AlphaZero can (even 1600 can be dangerous in the case of Go). If we are not careful enough, a low number of simulation can lead to unvisited children node at the root. In itself it wouldn't be a problem, but we train our policy network to return with the same result as the MCTS does. Consequently, accientaly a child node's probability is set to 0 and it might be possible a trained network will never again execute this node again.
