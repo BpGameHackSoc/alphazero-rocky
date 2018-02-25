@@ -33,11 +33,7 @@ class StudentAgent(Agent):
             print('Valid moves:' + str(state.valid_moves()))
             temp = kwargs.get('temp', 0)
             root = self.mcts.search(state=state)
-            visit_counts = self.mcts.rank_moves(root)
-            move = self.mcts.get_playing_move(temp)
-            print('Visits:' + str(visit_counts))
-            print('Temp:' + str(temp))
-            print('Move: '+ str(move))
+            print(self.mcts.stats())
 
     def calculate_real_distribution(self, visit_count_distribution, temp):
         distribution = visit_count_distribution ** temp

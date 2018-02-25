@@ -19,7 +19,7 @@ class Node(object):
     Responsible for keeping the data of tree node for Monte-Carlo Tree Search
     """
 
-    C = 1
+    C = math.e
 
     def __init__(self, state, p=0, parent=None):
         self.state = state
@@ -60,7 +60,7 @@ class Node(object):
         if self.V is None:
             parent_turn = self.parent.state.turn() if self.parent else 0
             v, p = self.__get_prediction(model)
-            self.V = v.flatten()[0] 
+            self.V = v.flatten()[0]
             self.children_p = p
             if self.state.is_over():
                 self.is_terminal = True

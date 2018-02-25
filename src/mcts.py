@@ -34,20 +34,23 @@ class MCTS():
         self.root_node = root_node
         if not root_node.is_visited():
             root_node.evaluate(self.model)
-        self.__add_dirichlet_noise()
+            self.__add_dirichlet_noise()
         if simulation_limit is None:
             begin = datetime.datetime.utcnow()
             while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
                 self.run_one_simulation()
+            self.search_time = self.seconds
         else:
+            begin = datetime.datetime.utcnow()
             for i in range(simulation_limit):
                 self.run_one_simulation()
+            self.search_time = (datetime.datetime.utcnow() - begin).total_seconds()
         return self.root_node
 
     def __add_dirichlet_noise(self):
         n = self.root_node.state.action_space_size()
-        self.root_node.children_p = (0.9 * self.root_node.children_p +
-                                     0.1 * np.random.dirichlet([1./n] * n))
+        self.root_node.children_p = (0.75 * self.root_node.children_p +
+                                     0.25 * np.random.dirichlet([1./n*10] * n))
 
     def run_one_simulation(self):
         last_node = self.simulate_to_leaf()
@@ -74,9 +77,9 @@ class MCTS():
     def UCT_score(self, parent, index):
         node = parent.children[index]
         if node is not None:
-            return node.Q + Node.C * node.p * parent.N / node.N+1
+            return node.Q + Node.C * node.p * math.sqrt(parent.N) / node.N+1
         else:
-            return Node.C * parent.children_p[index] * parent.N
+            return Node.C * parent.children_p[index] * math.sqrt(parent.N)
 
     def rank_moves(self, node):
         ranks = np.zeros(len(node.children))
@@ -84,6 +87,7 @@ class MCTS():
             if not child is None:
                 ranks[i] = child.N
         return ranks
+
 
     def get_playing_move(self, explore_temp=2):
         """
@@ -119,7 +123,8 @@ class MCTS():
         inf['nn_value'] = self.root_node.V
         inf['win_chance'] = self.root_node.Q/2.+0.5
         inf['n'] = self.root_node.N
-        inf['node/s'] = self.root_node.N / self.seconds
+        inf['time (s)'] = self.search_time
+        inf['node/s'] = self.root_node.N / self.search_time
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
         return inf
 
