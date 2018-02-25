@@ -104,4 +104,8 @@ ENV/
 #pycharm
 .idea
 
+#bin 
+bin
+
+#dummy runner
 run_test.py
