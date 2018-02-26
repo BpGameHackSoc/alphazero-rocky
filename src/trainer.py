@@ -88,7 +88,7 @@ class Trainer(object):
                 tqdm.write('Accepted!')
                 self.best_student = self.challenger
                 self.best_student.name = 'best_student' 
-                self.best_student.nn.save(file_name=self.game_type+'_checkpoint_'+str(i+1))
+                self.best_student.nn.save(file_name=self.game_type+'new_checkpoint_'+str(i+1))
             else:
                 tqdm.write('Rejected!')
             self.best_student.learning = True
