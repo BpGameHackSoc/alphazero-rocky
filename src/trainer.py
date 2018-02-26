@@ -2,13 +2,17 @@ import numpy as np
 from src.arena import Arena
 from src.games.gomoku.game import GomokuState
 from src.games.gomoku3d.game import Gomoku3dState
+from src.games.connect4.game import Connect4State
 from src.games.gomoku.neural_net import GomokuNN
 from src.games.gomoku3d.neural_net import Gomoku3dNN
+from src.games.connect4.neural_net import Connect4NN
 from src.config import *
 import src.games.gomoku.config as gomoku_config
 import src.games.gomoku3d.config as gomoku3d_config
+import src.games.connect4.config as connect4_config
 from collections import deque
 import pickle
+from tqdm import tqdm, trange
 
 import src.agents.student
 from importlib import reload
@@ -29,20 +33,25 @@ class Trainer(object):
     def config(self):
         if self.game_type == 'gomoku':
             nn = GomokuNN(self.model_path)
-            self.best_student = StudentAgent(nn, name='best_student')
             self.start_state = GomokuState()
             self.temp_threshold = gomoku_config.TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
         if self.game_type == 'gomoku3d':
             nn = Gomoku3dNN(self.model_path)
-            self.best_student = StudentAgent(nn, name='best_student')
             self.start_state = Gomoku3dState()
             self.temp_threshold = gomoku3d_config.TEMP_THRESHOLD
             self.temp_decay = gomoku3d_config.TEMP_DECAY
+        if self.game_type == 'connect4':
+            nn = Connect4NN(self.model_path)
+            self.start_state = Connect4State()
+            self.temp_threshold = connect4_config.TEMP_THRESHOLD
+            self.temp_decay = connect4_config.TEMP_DECAY
+        self.best_student = StudentAgent(nn, name='best_student')
 
     def play_one_episode(self):
         state = self.start_state.copy()
         observations = deque()
+        obs_extend = observations.extend
         root = None
         possible_move_len = state.action_space_size()
         while not state.is_over():
@@ -50,7 +59,7 @@ class Trainer(object):
             move = self.best_student.move(state, temp=temp, root=root)
             probabilities = self.best_student.last_run['probabilities']
             root = self.best_student.last_run['chosen_child']
-            observations.extend(state.to_all_symmetry_input(probabilities))
+            obs_extend(state.to_all_symmetry_input(probabilities))
             state = state.move(move)
 
         # Saving last state in order determine what means winning
@@ -66,23 +75,24 @@ class Trainer(object):
     def learn(self):
         n = self.no_of_games_played
         for i in range(n, n + self.iterations):
-            print(' *** ITERATION : ' + str(i+1) + ' ***')
-            for j in range(self.episodes):
+            tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
+            for j in trange(self.episodes):
                 self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()
             self.best_student.learning = False
             self.challenger.learning = False
             arena = Arena(self.game_type, self.best_student, self.challenger)
             wins = arena.war(NO_OF_GAMES_TO_BATTLE)
+            tqdm.write('Match result is : ' +  str(wins))
             if self.challanger_takes_crown(wins):
-                print('Accepted!')
+                tqdm.write('Accepted!')
                 self.best_student = self.challenger
                 self.best_student.name = 'best_student' 
                 self.best_student.nn.save(file_name=self.game_type+'_checkpoint_'+str(i+1))
             else:
-                print('Rejected!')
+                tqdm.write('Rejected!')
             self.best_student.learning = True
-        print('Learning has finished.')
+        tqdm.write('Learning has finished.')
         self.save_memory = self.__save_memory('memory_' + str(n+self.iterations))
 
 
@@ -102,7 +112,7 @@ class Trainer(object):
         return challenger
 
     def __save_memory(self, file_name):
-        path = WORK_FOLDER + file_name + '.p'
+        path = WORK_FOLDER + self.game_type + '_' + file_name + '.p'
         pickle.dump(self.observations, open(path, "wb" ))
         print('Memory saved at ' + path)
 
@@ -135,6 +145,8 @@ class Trainer(object):
             return GomokuNN(model_name=model_name)
         if self.game_type == 'gomoku3d':
             return Gomoku3dNN(model_name=model_name)
+        if self.game_type == 'connect4':
+            return Connect4NN(model_name=model_name)
 
     def __temperature(self, move_count):
         if move_count <= self.temp_threshold:
