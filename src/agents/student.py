@@ -24,6 +24,7 @@ class StudentAgent(Agent):
         visit_counts = self.mcts.rank_moves(root)
         probabilities = visit_counts / float(visit_counts.sum())
         move = self.mcts.get_playing_move(temp)
+        self.last_run['stats'] = self.mcts.stats()
         self.last_run['probabilities'] = probabilities
         self.last_run['chosen_child'] = root.children[move]
         return move
@@ -31,9 +32,7 @@ class StudentAgent(Agent):
     def evaluate(self, state, **kwargs):
         if not state.is_over():
             print('Valid moves:' + str(state.valid_moves()))
-            temp = kwargs.get('temp', 0)
-            root = self.mcts.search(state=state)
-            print(self.mcts.stats())
+            print(self.last_run['stats'])
 
     def calculate_real_distribution(self, visit_count_distribution, temp):
         distribution = visit_count_distribution ** temp

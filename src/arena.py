@@ -31,17 +31,20 @@ class Arena(object):
             agent_index = starting_agent_index
             state = self.__init_state()
             while not state.is_over():
-                self.__display(verbose, state, self.agents[agent_index])
+                self.__show_state(verbose, state)
                 move = self.agents[agent_index].move(state)
+                self.__display(verbose, state, self.agents[agent_index])
                 state = state.move(move)
                 agent_index = 1 - agent_index
             self.__display(verbose, state, self.agents[agent_index])
             wins += self.__determine_scores(state.winner(), starting_agent_index)
         return wins
 
-    def __display(self, verbose, state, agent):
+    def __show_state(self, verbose, state):
         if verbose >= 1:
             print(state)
+
+    def __display(self, verbose, state, agent):
         if verbose >= 2:
             agent.evaluate(state)
         if verbose > 0 :
