@@ -10,7 +10,7 @@ The goal of this project is to understand the algorithm of AlphaZero and go beyo
 
 ### The view of the board
 
-[source](http://teleported.in/posts/analysing-alphago/)
+[image source](http://teleported.in/posts/analysing-alphago/)
 
 <img src="http://teleported.in/post_imgs/04-alphago.jpg" alt="go_board" width="250" height="250" align="right" />
 
@@ -27,6 +27,10 @@ But we believe it's not exactly the right way to look at the board. When a playe
 In the last decades, temporal difference learning has become quite popular. Nevertheless, for some reason DeepMind did not use it, but simply fed back the outcome of the game into both the ending and opening positions. In other words, if white side won a game and the final result was interpreted as -1, even the very first state was marked with the -1 label during the training of the neural net.
 
 We suspect a minor but possible issue: exploration moves. What if we already have a quite perfect evaluation function, but we keep forcing our engine to make exploration moves? The training set will become noisy and we could hardly improve the program if it already has a considerably strong level.
+
+[image source](http://slides.com/ericmoura/deck-2/embed)
+
+<img src="https://s3.amazonaws.com/media-p.slid.es/uploads/ericmoura/images/1232802/Exploration_vs._Exploitation.png" alt="go_board" width="350" height="350" />
 
 We would like to propose a bit different approach. At first, when the engine is dumpy, it's okay to make feedback of the final outcome everywhere, because the computer needs some initial knowledge. But, given that we know exactly how likely it is that the chosen move is beneficial, temporal difference learning can help us to cut off exploration moves, so the original knowledge wouldn't get get corrupted.
 
