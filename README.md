@@ -10,8 +10,9 @@ The goal of this project is to understand the algorithm of AlphaZero and go beyo
 
 ### The view of the board
 
-<img src="http://teleported.in/post_imgs/04-alphago.jpg" alt="go_board" width="250" height="250" align="right" />
 [source](http://teleported.in/posts/analysing-alphago/)
+
+<img src="http://teleported.in/post_imgs/04-alphago.jpg" alt="go_board" width="250" height="250" align="right" />
 
 As described in this [paper](https://deepmind.com/documents/119/agz_unformatted_nature.pdf), DeepMind used an entire image channel to tell the neural network who's turn it is in the given state.
 > The final feature plane, C, represents the colour to play and has a constant value of either 1 if black
