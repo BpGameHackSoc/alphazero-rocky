@@ -10,7 +10,7 @@ The goal of this project is to understand the algorithm of AlphaZero and go beyo
 
 ### The view of the board
 
-![alt convolutional network](http://teleported.in/post_imgs/04-alphago.jpg)
+<img src="http://teleported.in/post_imgs/04-alphago.jpg" alt="go_board" width="400" height="400">
 [source](http://teleported.in/posts/analysing-alphago/)
 
 As described in this [paper](https://deepmind.com/documents/119/agz_unformatted_nature.pdf), DeepMind used an entire image channel to tell the neural network who's turn it is in the given state.
