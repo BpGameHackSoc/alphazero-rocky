@@ -40,10 +40,9 @@ Because this method would leave the opening positions empty for a very long time
 
 ### Evolutionary algorithm
 
-Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, even for the simplest game it's not really possible at home. But, we have a strong hope that maybe the key of the algorithm is not the MCTS's supervision on the policy network, but the evulational steps how AlphaZero grows by self-play. Assuming we're playing a game with a finite number of states, the perfect evaluation function must exist, thus, maybe it's possible two get a closer estimate by only relying on decisions carried out by the polcy network.
+Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, even for the simplest game it's not really possible at home. But, we have a strong hope that maybe the key of the algorithm is not the MCTS's supervision on the policy network, but the evulational steps how AlphaZero grows by self-play. Thus, we would like to make an attempt on dropping MCTS away and rather focusing on the evolutionary algorithm. Assuming we're playing a game with a finite number of states, the perfect evaluation (or policy) function must exist, thus, the only challenge is how fast and how accurate the engineers can estimate the perfect function.
 
-In summary, we'd like to try out what if the MCTS is removed and we continue with the policy network only. The idea would be to learn 0 or 1 for all actions chosen during a game, but with the application of temporal difference learning, the same way as described in the section above. When the self-play is done, we would use not only two but dozens of agents to challenge the current best model.
-
+In summary, we'd like to try out what if the MCTS is removed and then we would continue with the policy network only. The engine would learn 0 or 1 for all actions chosen during a game, but with the application of temporal difference learning, the same way as described in the section above. 
 
 ## Other differences
 
