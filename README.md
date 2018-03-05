@@ -40,11 +40,9 @@ Because this method would leave the opening positions empty for a very long time
 
 ### Evolutionary algorithm
 
-Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, even for the simplest game it's not really possible at home. But, we have a strong hope that maybe the key of the algorithm is not the MCTS's supervision on the policy network, but the evulational steps how AlphaZero grows by self-play. Thus, we would like to make an attempt on dropping MCTS away and rather focusing on the evolutionary algorithm. Assuming we're playing a game with a finite number of states, the perfect evaluation (or policy) function must exist, thus, the only challenge is how fast and how accurate the engineers can estimate the perfect function.
+Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, even for the simplest game it's not really possible at home. But, we have a strong hope that maybe the key of the algorithm is not the MCTS's supervision on the policy network, but the evulational steps how AlphaZero grows by self-play. Therefore we will attempt dropping MCTS away and emphasize the evolutionary algorithm instead. Assuming we're playing a game with a finite number of states, the perfect evaluation (or policy) function must exist, thus, the only challenge is how fast and how accurate the engineers can estimate this function. Maybe if not only two but multiple agents learnt and competed for the crown, the training process would speed up.
 
-In summary, we'd like to try out what if the MCTS is removed and then we would continue with the policy network only. The engine would learn 0 or 1 for all actions chosen during a game, but with the application of temporal difference learning, the same way as described in the section above. 
-
-## Other differences
+## Fundamental differences between Rocky and AlphaZero
 
  - This engine uses ___ CPU and ____ GPU, while AlphaZero used 5000 TPUs
  - Everything is executed on one core, no parallelization was done
@@ -53,3 +51,5 @@ In summary, we'd like to try out what if the MCTS is removed and then we would c
 ## References
 
 - Silver, David, et al. "Mastering the Game of Go without Human Knowledge." Nature 550.7676 (2017): 354.
+- Mastering the game of Go with deep neural networks and tree search
+- Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm
