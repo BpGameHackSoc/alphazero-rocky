@@ -30,7 +30,7 @@ We suspect a minor but possible issue: exploration moves. What if we already hav
 
 [image source](http://slides.com/ericmoura/deck-2/embed)
 
-<img src="https://s3.amazonaws.com/media-p.slid.es/uploads/ericmoura/images/1232802/Exploration_vs._Exploitation.png" alt="go_board" width="350" height="350" />
+<img src="https://s3.amazonaws.com/media-p.slid.es/uploads/ericmoura/images/1232802/Exploration_vs._Exploitation.png" alt="exploration" width="300" height="200" align="left" />
 
 We would like to propose a bit different approach. At first, when the engine is dumpy, it's okay to make feedback of the final outcome everywhere, because the computer needs some initial knowledge. But, given that we know exactly how likely it is that the chosen move is beneficial, temporal difference learning can help us to cut off exploration moves, so the original knowledge wouldn't get get corrupted.
 
