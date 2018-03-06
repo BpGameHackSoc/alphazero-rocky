@@ -18,6 +18,8 @@ import src.agents.student
 from importlib import reload
 reload(src.agents.student)
 from src.agents.student import StudentAgent
+from src.agents.random import RandomAgent
+from time import sleep
 
 class Trainer(object):
     def __init__(self, game_type, model_path=None, memory_path=None):
@@ -34,19 +36,47 @@ class Trainer(object):
         if self.game_type == 'gomoku':
             nn = GomokuNN(self.model_path)
             self.start_state = GomokuState()
-            self.temp_threshold = gomoku_config.TEMP_THRESHOLD
+            self.low_temp_threshold = gomoku_config.LOW_TEMP_THRESHOLD
+            self.hight_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
         if self.game_type == 'gomoku3d':
             nn = Gomoku3dNN(self.model_path)
             self.start_state = Gomoku3dState()
-            self.temp_threshold = gomoku3d_config.TEMP_THRESHOLD
+            self.low_temp_threshold = gomoku3d_config.LOW_TEMP_THRESHOLD
+            self.hight_temp_threshold = gomoku3d_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku3d_config.TEMP_DECAY
         if self.game_type == 'connect4':
             nn = Connect4NN(self.model_path)
             self.start_state = Connect4State()
-            self.temp_threshold = connect4_config.TEMP_THRESHOLD
+            self.low_temp_threshold = connect4_config.LOW_TEMP_THRESHOLD
+            self.hight_temp_threshold = connect4_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = connect4_config.TEMP_DECAY
         self.best_student = StudentAgent(nn, name='best_student')
+
+    def fill_memory_with_random_plays(self):
+        agent = RandomAgent()
+        possible_move_len = self.start_state.action_space_size()
+        p = np.full((possible_move_len, ), 1./possible_move_len)
+        pbar = tqdm(total=self.memory_size, desc='Random fill')
+        while len(self.observations) < self.memory_size:
+            current_observations = deque()
+            state = self.start_state.copy()
+            while not state.is_over():
+                noise = np.random.uniform(-0.1/p.size, 0.1/p.size, p.size)
+                noise -= noise.mean()
+                move = agent.move(state)
+                current_observations.extend(state.to_all_symmetry_input(p+noise))
+                state = state.move(move)
+            noise = np.random.uniform(-0.1/p.size, 0.1/p.size, p.size)
+            noise -= noise.mean()
+            current_observations.extend(state.to_all_symmetry_input(p+noise))
+            winner = state.winner()
+            for i in range(len(current_observations)):
+                current_observations[i][1] *= winner.value
+            self.observations.extend(current_observations)
+            pbar.update(len(current_observations))
+            sleep(0.01)
+        pbar.close()
 
     def play_one_episode(self):
         state = self.start_state.copy()
@@ -75,14 +105,22 @@ class Trainer(object):
     def learn(self):
         n = self.no_of_games_played
         for i in range(n, n + self.iterations):
+            sleep(0.3)
             tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
-            for j in trange(self.episodes):
-                self.observations.extend(self.play_one_episode())
+            if len(self.observations) == 0:
+                tqdm.write(' - Using random plays, memory is empty.. - ')
+                sleep(0.3)
+                self.fill_memory_with_random_plays()
+            else:
+                sleep(0.3)
+                for j in trange(self.episodes):
+                    self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()
             self.best_student.learning = False
             self.challenger.learning = False
             arena = Arena(self.game_type, self.best_student, self.challenger)
             wins = arena.war(NO_OF_GAMES_TO_BATTLE)
+            sleep(0.3)
             tqdm.write('Match result is : ' +  str(wins))
             if self.challanger_takes_crown(wins):
                 tqdm.write('Accepted!')
@@ -149,7 +187,9 @@ class Trainer(object):
             return Connect4NN(model_name=model_name)
 
     def __temperature(self, move_count):
-        if move_count <= self.temp_threshold:
+        if move_count <= self.low_temp_threshold:
+            return 2
+        if move_count <= self.high_temp_threshold:
             return 1
         else:
             return max(0, (1-self.temp_decay*move_count))

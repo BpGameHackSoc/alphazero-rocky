@@ -35,6 +35,7 @@ class MCTS():
         if not root_node.is_visited():
             root_node.evaluate(self.model)
             self.__add_dirichlet_noise()
+            root_node.N = 1
         if simulation_limit is None:
             begin = datetime.datetime.utcnow()
             while datetime.datetime.utcnow() - begin < self.time_limit: #TODO tread this
@@ -50,7 +51,7 @@ class MCTS():
     def __add_dirichlet_noise(self):
         n = self.root_node.state.action_space_size()
         self.root_node.children_p = (0.75 * self.root_node.children_p +
-                                     0.25 * np.random.dirichlet([1./n*10] * n))
+                                     0.25 * np.random.dirichlet([1./n] * n))
 
     def run_one_simulation(self):
         last_node = self.simulate_to_leaf()
@@ -77,7 +78,7 @@ class MCTS():
     def UCT_score(self, parent, index):
         node = parent.children[index]
         if node is not None:
-            return node.Q + Node.C * node.p * math.sqrt(parent.N) / node.N+1
+            return node.Q + Node.C * node.p * math.sqrt(parent.N) / (node.N+1)
         else:
             return Node.C * parent.children_p[index] * math.sqrt(parent.N)
 
@@ -125,6 +126,7 @@ class MCTS():
         inf['n'] = self.root_node.N
         inf['time (s)'] = self.search_time
         inf['node/s'] = self.root_node.N / self.search_time
+        inf['children_p'] = self.root_node.children_p
         inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
         return inf
 

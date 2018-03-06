@@ -53,14 +53,14 @@ class NeuralNetwork(abc.ABC):
         x = Dense(self.config['value_hidden_size'])(x)
         x = Activation('relu')(x)
         x = Dense(1)(x)
-        x = Activation('tanh')(x)
+        x = Activation('tanh', name='value')(x)
         return x
 
     def policy_head(self, x):
         x = self.conv_layer(x, 'policy_', filter_n=2, kernel_size=1)
         x = Flatten()(x)
         x = Dense(self.config['no_of_possible_actions'])(x)
-        x = Activation('softmax')(x)
+        x = Activation('softmax', name='policy')(x)
         return x
 
     def conv_layer(self, x, prefix, suffix='', original_x=None, **kwargs):

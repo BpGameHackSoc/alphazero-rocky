@@ -23,5 +23,6 @@ NEURAL_NET_SETTINGS = {
 # TRAINING
 # ==============================================================
 
-TEMP_THRESHOLD = BOARD_SIZE
+LOW_TEMP_THRESHOLD = CONNECT_SIZE
+HIGH_TEMP_THRESHOLD = BOARD_SIZE-1
 TEMP_DECAY = 1. / BOARD_SIZE

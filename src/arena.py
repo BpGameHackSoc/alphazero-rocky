@@ -2,6 +2,7 @@ from src.games.gomoku.game import GomokuState
 from src.games.gomoku3d.game import Gomoku3dState
 from src.games.connect4.game import Connect4State
 import numpy as np
+from tqdm import tqdm, trange
 
 class Arena(object):
     def __init__(self, game_type, agent1, agent2):
@@ -17,7 +18,7 @@ class Arena(object):
                 return: The number of wins on agent1's and agent2 sides respectively.
         '''
         wins = np.array([0., 0.])
-        for game_pair_index in range(n):
+        for game_pair_index in trange(n, desc='Arena'):
             wins += self.battle(verbose)
         return wins
 
