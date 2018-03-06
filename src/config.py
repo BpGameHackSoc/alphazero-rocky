@@ -7,9 +7,9 @@ WORK_FOLDER = 'bin/'
 
 DEFAULT_NEURAL_NET_SETTINGS = {
     'no_of_possible_actions' : None,      # The number of actions the softmax layer produces
-    'value_hidden_size' : 128,             # Size of hidden layer in value head 
+    'value_hidden_size' : 256,             # Size of hidden layer in value head 
     'res_layer_n' : 5,                    # The number of residual layers
-    'filter_n' : 32,                     # The number of filters in a conv layer
+    'filter_n' : 128,                     # The number of filters in a conv layer
     'kernel_size' : 3,
     'batch_size' : 100,                    
     'epochs' : 1,
