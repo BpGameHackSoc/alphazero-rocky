@@ -37,19 +37,19 @@ class Trainer(object):
             nn = GomokuNN(self.model_path)
             self.start_state = GomokuState()
             self.low_temp_threshold = gomoku_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
         if self.game_type == 'gomoku3d':
             nn = Gomoku3dNN(self.model_path)
             self.start_state = Gomoku3dState()
             self.low_temp_threshold = gomoku3d_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = gomoku3d_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = gomoku3d_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku3d_config.TEMP_DECAY
         if self.game_type == 'connect4':
             nn = Connect4NN(self.model_path)
             self.start_state = Connect4State()
             self.low_temp_threshold = connect4_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = connect4_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = connect4_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = connect4_config.TEMP_DECAY
         self.best_student = StudentAgent(nn, name='best_student')
 
