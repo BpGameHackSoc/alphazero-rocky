@@ -8,12 +8,12 @@ WORK_FOLDER = 'bin/'
 DEFAULT_NEURAL_NET_SETTINGS = {
     'no_of_possible_actions' : None,      # The number of actions the softmax layer produces
     'value_hidden_size' : 128,             # Size of hidden layer in value head 
-    'res_layer_n' : 5,                    # The number of residual layers
+    'res_layer_n' : 2,                    # The number of residual layers
     'filter_n' : 32,                     # The number of filters in a conv layer
     'kernel_size' : 3,
     'batch_size' : 100,                    
-    'epochs' : 1,
-    'verbose' : 1,
+    'epochs' : 3,
+    'verbose' : 0,
     'validation_split' : 0.05,
     'input_shape' : None,
     'history' : []
@@ -30,10 +30,10 @@ MINIMUM_TEMPERATURE_ACCEPTED = 0.2
 
 # How many seconds to think on a move while training
 DEFAULT_TRAIN_THINK_TIME = 1.2
-DEFAULT_NUMBER_OF_SIMULATIONS = 160
+DEFAULT_NUMBER_OF_SIMULATIONS = 100
 
 # The maximum number of positions to save
-MEMORY_SIZE = 10000
+MEMORY_SIZE = 40000
 
 NO_OF_EPISODES = 200
 NO_OF_ITERATIONS = 50

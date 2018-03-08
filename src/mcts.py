@@ -119,6 +119,8 @@ class MCTS():
 
 
     def stats(self):
+        if self.search_time == 0:
+            self.search_time = 0.001
         inf = {}
         inf['max_depth'] = self.root_node.max_depth()
         inf['nn_value'] = self.root_node.V

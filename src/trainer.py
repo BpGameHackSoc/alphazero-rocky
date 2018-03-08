@@ -37,19 +37,19 @@ class Trainer(object):
             nn = GomokuNN(self.model_path)
             self.start_state = GomokuState()
             self.low_temp_threshold = gomoku_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
         if self.game_type == 'gomoku3d':
             nn = Gomoku3dNN(self.model_path)
             self.start_state = Gomoku3dState()
             self.low_temp_threshold = gomoku3d_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = gomoku3d_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = gomoku3d_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku3d_config.TEMP_DECAY
         if self.game_type == 'connect4':
             nn = Connect4NN(self.model_path)
             self.start_state = Connect4State()
             self.low_temp_threshold = connect4_config.LOW_TEMP_THRESHOLD
-            self.hight_temp_threshold = connect4_config.HIGH_TEMP_THRESHOLD
+            self.high_temp_threshold = connect4_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = connect4_config.TEMP_DECAY
         self.best_student = StudentAgent(nn, name='best_student')
 
@@ -107,14 +107,14 @@ class Trainer(object):
         for i in range(n, n + self.iterations):
             sleep(0.3)
             tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
-            if len(self.observations) == 0:
-                tqdm.write(' - Using random plays, memory is empty.. - ')
-                sleep(0.3)
-                self.fill_memory_with_random_plays()
-            else:
-                sleep(0.3)
-                for j in trange(self.episodes):
-                    self.observations.extend(self.play_one_episode())
+            # if len(self.observations) == 0:
+            #     tqdm.write(' - Using random plays, memory is empty.. - ')
+            #     sleep(0.3)
+            #     self.fill_memory_with_random_plays()
+            # else:
+            sleep(0.3)
+            for j in trange(self.episodes):
+                self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()
             self.best_student.learning = False
             self.challenger.learning = False
