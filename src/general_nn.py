@@ -4,6 +4,7 @@ from keras.models import Sequential, load_model, Model
 from keras.layers.merge import Add
 from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
+from keras import optimizers
 from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
 import numpy as np
 
@@ -32,8 +33,9 @@ class NeuralNetwork(abc.ABC):
         value = self.value_head(x)
         policy = self.policy_head(x)
         model = Model(inp, [value, policy])
+        sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(loss=['mean_squared_error', 'categorical_crossentropy'],
-                      optimizer='rmsprop')
+                      optimizer=sgd)
         self.model = model
 
     def res_layer(self, x, index):
