@@ -1,6 +1,8 @@
 # Rocky (AlphaZero at home)
 
-Rocky is a simple implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and we're still looking for improvements.
+Rocky is a general, home-made implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and we're still looking for improvements.
+
+The goal of this project is to understand the algorithm of AlphaZero and go beyond, finding possible improvements. Although DeepMind's program's performance is mind-blowing, it still requires thousands of TPUs to be trained and is not convenient for home use yet. Maybe we'll find a way to speed up and simplify the training. Fingers crossed.
 
 ## Achievements
 
@@ -23,9 +25,6 @@ Afterall we've decided the engine managed to reach a high level of gameplay thus
 
 <p></p>
 
-## Goals
-
-The goal of this project is to understand the algorithm of AlphaZero and go beyond, finding possible improvements. Although DeepMind's program's performance is mind-blowing, it still requires thousands of TPUs to be trained and is not convenient for home use yet. Maybe we'll find a way to speed up and simplify the training. Fingers crossed.
 
 ## Possible improvements on AlphaZero
 
