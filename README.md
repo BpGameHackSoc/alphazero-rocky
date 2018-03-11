@@ -20,7 +20,7 @@ Afterall we've decided the engine managed to reach a high level of gameplay thus
 <p></p>
 
 <p align="center" style="margin-top: 30px; margin-bottom:30px">
- <img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="400" align="middle" />
+ <img src="https://i.imgur.com/UnMMIvh.png" alt="https://imgur.com/UnMMIvh" width="400" align="middle" />
 </p>
 
 <p></p>
