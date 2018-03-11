@@ -12,9 +12,13 @@ We have run the algorithm on a well-known game called Connect-4. The engine star
 In order to test its real performance, we took the 24-hour-generation version of the engine, increased the number of simulations to 1200 and played it against our colleagues, meaning a group of data scientists. The early version acquired a knowledge that was enough to beat the human team 5 to 1.
 
 Fun fact: The learning was stopped by an accidental windows reboot. :laughing:
-Afterall we've decided the engine managed to reach a high level of gameplay thus there was no point to continue the teaching. The performance of the engine can be seen below, where I made an assumption that the
 
-<img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="400" align="middle" />
+Afterall we've decided the engine managed to reach a high level of gameplay thus there was no point to continue the teaching. The performance of the engine can be seen below. I chose the random player to have 0 ELO points.
+
+
+<p align="center">
+ <img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="400" align="middle" />
+</p>
 
 
 
