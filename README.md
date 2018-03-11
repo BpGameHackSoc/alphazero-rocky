@@ -15,12 +15,13 @@ Fun fact: The learning was stopped by an accidental windows update & reboot. :la
 
 Afterall we've decided the engine managed to reach a high level of gameplay thus there was no point to continue the teaching. The performance of the engine can be seen below. I chose the random player to have 0 ELO points.
 
+<p></p>
 
 <p align="center" style="margin-top: 30px; margin-bottom:30px">
  <img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="400" align="middle" />
 </p>
 
-
+<p></p>
 
 ## Goals
 
@@ -67,6 +68,12 @@ Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, eve
  - AlphaZero used 5000 TPUs, whereas for us only one CPU and one GPU were available
  - Everything is executed on one core, no parallelization was done
  - To speed up the learning, the terminal nodes in the MCTS return with the true value (-1, 0, 1)
+ 
+## Developers
+
+[Gergely Halacsy](https://www.linkedin.com/in/gergely-hal%C3%A1csy-808968150/)
+[Gergely Papp](https://www.linkedin.com/in/gergopool/)
+ 
  
 ## References
 
