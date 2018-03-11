@@ -8,7 +8,7 @@ We have run the algorithm on a well-known game called Connect-4. The engine star
 
 <blockquote class="imgur-embed-pub" lang="en" data-id="a/bzqXU"><a href="//imgur.com/bzqXU"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
-<img src="https://i.imgur.com/ylVX3r0.gifv" alt="https://imgur.com/bzqXU" width="250" height="250" align="center" />
+<img src="https://imgur.com/bzqXU.gif" alt="https://imgur.com/bzqXU" width="250" height="250" align="center" />
 
 <img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" align="center" />
 
