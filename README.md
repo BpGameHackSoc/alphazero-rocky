@@ -1,6 +1,15 @@
 # Rocky (AlphaZero at home)
 
-Rocky is a simple implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and is under development.
+Rocky is a simple implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and we're still looking for improvements.
+
+## Achievements
+
+We have run the algorithm on a well-known game called Connect-4. The engine started from scratch and was studying for 60 hours on a Intel® Core™ 2 Quad, 2.40 GHz CPU. Interestingly while the engine was exploring the game it picked up different trends and openings. An example self-play game:
+
+<img src="https://i.imgur.com/ylVX3r0.gifv" alt="https://imgur.com/a/tHkFk" width="250" height="250" align="center" />
+
+<img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="250" height="250" align="center" />
+
 
 ## Goals
 
@@ -44,7 +53,7 @@ Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, eve
 
 ## Fundamental differences between Rocky and AlphaZero
 
- - This engine uses ___ CPU and ____ GPU, while AlphaZero used 5000 TPUs
+ - AlphaZero used 5000 TPUs, whereas for us only one CPU and one GPU were available
  - Everything is executed on one core, no parallelization was done
  - To speed up the learning, the terminal nodes in the MCTS return with the true value (-1, 0, 1)
  
