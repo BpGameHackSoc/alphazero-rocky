@@ -72,6 +72,7 @@ Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, eve
 ## Developers
 
 [Gergely Halacsy](https://www.linkedin.com/in/gergely-hal%C3%A1csy-808968150/)
+
 [Gergely Papp](https://www.linkedin.com/in/gergopool/)
  
  
