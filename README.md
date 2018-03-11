@@ -6,13 +6,8 @@ Rocky is a simple implementation of AlphaZero. The engine is flexible for any pe
 
 We have run the algorithm on a well-known game called Connect-4. The engine started from scratch and was studying for 60 hours on a Intel® Core™ 2 Quad, 2.40 GHz CPU. Interestingly while the engine was exploring the game it picked up different trends and openings. An example self-play game:
 
-
-
-<img src="https://i.imgur.com/ldonPOu.gif" alt="https://imgur.com/ldonPOu" align="center" />
-
-<center>
-<img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" align="center" />
- </center>
+<img src="https://i.imgur.com/ldonPOu.gif" alt="https://imgur.com/ldonPOu" width="300" align="left" />
+<img src="https://i.imgur.com/R2zouQc.png" alt="https://imgur.com/a/UvhNL" width="300" align="right" />
 
 
 ## Goals
