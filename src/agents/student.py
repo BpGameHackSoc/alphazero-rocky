@@ -27,14 +27,34 @@ class StudentAgent(Agent):
         self.last_run['stats'] = self.mcts.stats()
         self.last_run['probabilities'] = probabilities
         self.last_run['chosen_child'] = root.children[move]
+        self.last_run['last_move'] = move
         return move
 
     def evaluate(self, state, **kwargs):
         if not state.is_over():
             print('Valid moves:' + str(state.valid_moves()))
-            print(self.last_run['stats'])
+            print(self.str_stats())
 
     def calculate_real_distribution(self, visit_count_distribution, temp):
         distribution = visit_count_distribution ** temp
         distribution = distribution / distribution.sum()
         return distribution
+
+    def str_stats(self):
+        s = self.last_run['stats']
+        move = self.last_run['last_move']
+
+        out = '-' * 80 + '\n'
+        out += '| Simulations: %13d | Time (s): %13.2f | Node/s: %13.2f |\n' % (s['n'], s['time (s)'], s['node/s'])
+        out += '-' * 80 + '\n'
+        out += '| children_p: %-65s|\n' % s['children_p'].round(2).tolist()
+        out += '-' * 80 + '\n'
+        out += '| Visits: %-69s|\n' % s['ranks']
+        out += '-' * 80 + '\n'
+        out += '| NN value: %16.2f | Win chance: %10.2f%% | Max depth: %10d |\n' % (s['nn_value'],
+                                                                                 s['win_chance'] * 100,
+                                                                                 s['max_depth'])
+        out += '=' * 80 + '\n'
+        out += '| Preferred move: %-20d | Final move: %-26d|\n' % (s['children_p'].argmax(), move)
+        out += '-' * 80 + '\n'
+        return out
