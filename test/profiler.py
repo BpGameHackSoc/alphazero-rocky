@@ -20,7 +20,7 @@ class Profiler():
         self.pr.disable()
         s = io.StringIO()
         sortby = 'cumulative'
-        ps = pstats.Stats(self.pr, stream=s).sort_stats(sortby)
+        ps = pstats.Stats(self.pr, stream=s).strip_dirs().sort_stats(sortby)
         ps.print_stats()
         profile = s.getvalue()
         if LOG_PROFILE:

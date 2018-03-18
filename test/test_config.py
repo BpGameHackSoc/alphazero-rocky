@@ -1,1 +1,1 @@
-LOG_PROFILE = True
+LOG_PROFILE = False

@@ -119,8 +119,11 @@ class NeuralNetwork(abc.ABC):
             print('Model saved in ' + path)
         return path
 
-    def load(self, file_name):
-        self.model = load_model(WORK_FOLDER + file_name + '.h5')
+    def load(self, file_name,path=None):
+        if path is None:
+            self.model = load_model(WORK_FOLDER + file_name + '.h5')
+        else:
+            self.model = load_model(path)
         pass
 
     def clone(self):

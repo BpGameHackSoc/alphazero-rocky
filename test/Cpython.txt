@@ -1,0 +1,353 @@
+{'max_depth': 8, 'nn_value': 0.1590304, 'win_chance': 0.5390251038660795, 'n': 151, 'time (s)': 1.023252, 'node/s': 147.5687318470914, 'children_p': array([0.15686652, 0.00392365, 0.00519585, 0.18281662, 0.00431422,
+       0.0023029 , 0.00586181, 0.00362151, 0.00398328, 0.00364333,
+       0.0041552 , 0.0056579 , 0.19978424, 0.25169889, 0.00478642,
+       0.16138762]), 'ranks': [30, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 42, 16, 0, 29]}
+         193569 function calls (192950 primitive calls) in 6.405 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    6.388    6.388 mcts.py:21(search)
+        1    0.000    0.000    6.388    6.388 mcts.py:33(search_node)
+      151    0.001    0.000    6.227    0.041 tree_node.py:59(evaluate)
+      151    0.001    0.000    6.199    0.041 tree_node.py:70(__get_prediction)
+      151    0.001    0.000    6.191    0.041 general_nn.py:111(predict)
+      151    0.280    0.002    6.191    0.041 training.py:1746(predict)
+      151    0.005    0.000    5.899    0.039 training.py:1232(_predict_loop)
+      151    0.003    0.000    5.888    0.039 tensorflow_backend.py:2461(__call__)
+      151    0.001    0.000    5.844    0.039 session.py:781(run)
+      151    0.007    0.000    5.843    0.039 session.py:1036(_run)
+      151    0.002    0.000    5.783    0.038 session.py:1258(_do_run)
+      151    0.000    0.000    5.777    0.038 session.py:1321(_do_call)
+      151    0.002    0.000    5.777    0.038 session.py:1290(_run_fn)
+      151    5.673    0.038    5.673    0.038 {built-in method _pywrap_tensorflow_internal.TF_Run}
+      150    0.000    0.000    1.023    0.007 mcts.py:56(run_one_simulation)
+      150    0.002    0.000    1.009    0.007 mcts.py:60(simulate_to_leaf)
+      150    0.000    0.000    0.933    0.006 tree_node.py:54(expand_and_evaluate)
+      151    0.000    0.000    0.099    0.001 session.py:1338(_extend_graph)
+        1    0.097    0.097    0.097    0.097 {built-in method _pywrap_tensorflow_internal.TF_ExtendGraph}
+      685    0.003    0.000    0.074    0.000 mcts.py:72(select)
+        1    0.000    0.000    0.058    0.058 mcts.py:51(__add_dirichlet_noise)
+        1    0.058    0.058    0.058    0.058 {method 'dirichlet' of 'mtrand.RandomState' objects}
+      685    0.008    0.000    0.053    0.000 mcts.py:74(<listcomp>)
+    10960    0.043    0.000    0.044    0.000 mcts.py:78(UCT_score)
+      302    0.001    0.000    0.042    0.000 game.py:51(is_over)
+      151    0.009    0.000    0.040    0.000 tensorflow_backend.py:149(get_session)
+      302    0.006    0.000    0.033    0.000 game.py:54(winner)
+    52940    0.024    0.000    0.024    0.000 {built-in method builtins.getattr}
+     1137    0.010    0.000    0.021    0.000 game.py:38(valid_moves)
+      151    0.003    0.000    0.020    0.000 session.py:401(__init__)
+        1    0.000    0.000    0.017    0.017 mcts.py:121(stats)
+    151/1    0.000    0.000    0.016    0.016 tree_node.py:36(max_depth)
+      150    0.005    0.000    0.013    0.000 mcts.py:111(backpropagation)
+      150    0.001    0.000    0.012    0.000 tree_node.py:49(define_child)
+      302    0.010    0.000    0.012    0.000 game.py:72(get_layers)
+  604/151    0.002    0.000    0.012    0.000 session.py:215(for_fetch)
+      151    0.001    0.000    0.012    0.000 session.py:334(__init__)
+      150    0.004    0.000    0.011    0.000 game.py:41(move)
+     1815    0.010    0.000    0.010    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     1208    0.001    0.000    0.010    0.000 {method 'sum' of 'numpy.ndarray' objects}
+     2277    0.009    0.000    0.009    0.000 {built-in method numpy.core.multiarray.array}
+     1208    0.001    0.000    0.009    0.000 _methods.py:31(_sum)
+      151    0.000    0.000    0.009    0.000 session.py:341(<listcomp>)
+      302    0.002    0.000    0.008    0.000 tensor_shape.py:693(is_compatible_with)
+     1820    0.003    0.000    0.007    0.000 game.py:32(turn)
+      757    0.001    0.000    0.006    0.000 ops.py:3002(as_graph_element)
+    13937    0.004    0.000    0.006    0.000 {built-in method builtins.isinstance}
+      453    0.001    0.000    0.006    0.000 session.py:251(__init__)
+      151    0.002    0.000    0.006    0.000 session.py:458(build_results)
+      151    0.000    0.000    0.006    0.000 topology.py:1952(stateful)
+      151    0.002    0.000    0.005    0.000 topology.py:1954(<listcomp>)
+      151    0.001    0.000    0.005    0.000 nest.py:226(flatten_dict_items)
+      835    0.001    0.000    0.005    0.000 fromnumeric.py:943(argmax)
+      151    0.000    0.000    0.005    0.000 variables.py:1225(global_variables)
+      757    0.002    0.000    0.005    0.000 ops.py:3037(_as_graph_element_locked)
+     3100    0.004    0.000    0.004    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+      302    0.001    0.000    0.004    0.000 tensor_shape.py:844(as_shape)
+      151    0.000    0.000    0.004    0.000 ops.py:4831(get_collection)
+      906    0.002    0.000    0.004    0.000 ops.py:302(name)
+     2043    0.004    0.000    0.004    0.000 {method 'flatten' of 'numpy.ndarray' objects}
+      303    0.001    0.000    0.004    0.000 tensor_shape.py:420(__init__)
+     2120    0.002    0.000    0.004    0.000 enum.py:265(__call__)
+      835    0.001    0.000    0.004    0.000 fromnumeric.py:50(_wrapfunc)
+      151    0.003    0.000    0.004    0.000 game.py:121(to_input)
+      150    0.001    0.000    0.004    0.000 game.py:110(copy)
+      764    0.001    0.000    0.003    0.000 ops.py:4542(get_default_graph)
+      151    0.002    0.000    0.003    0.000 ops.py:3343(get_collection)
+      151    0.001    0.000    0.003    0.000 training.py:355(_slice_arrays)
+      906    0.003    0.000    0.003    0.000 {built-in method numpy.core.multiarray.zeros}
+     8911    0.003    0.000    0.003    0.000 {built-in method builtins.hasattr}
+      302    0.001    0.000    0.003    0.000 nest.py:114(is_sequence)
+     2269    0.003    0.000    0.003    0.000 ops.py:1623(name)
+      605    0.000    0.000    0.003    0.000 {method 'any' of 'numpy.ndarray' objects}
+      764    0.001    0.000    0.003    0.000 ops.py:4500(get_default)
+      302    0.000    0.000    0.002    0.000 session.py:507(_name_list)
+      151    0.002    0.000    0.002    0.000 training.py:382(<listcomp>)
+      151    0.001    0.000    0.002    0.000 session.py:1381(_update_with_movers)
+      151    0.001    0.000    0.002    0.000 session.py:295(_uniquify_fetches)
+      454    0.000    0.000    0.002    0.000 numeric.py:424(asarray)
+     2572    0.002    0.000    0.002    0.000 types.py:135(__get__)
+      302    0.001    0.000    0.002    0.000 session.py:516(<listcomp>)
+      302    0.000    0.000    0.002    0.000 tensor_shape.py:455(<listcomp>)
+      151    0.001    0.000    0.002    0.000 session.py:347(build_results)
+      305    0.001    0.000    0.002    0.000 ops.py:3237(as_default)
+      605    0.000    0.000    0.002    0.000 _methods.py:37(_any)
+        1    0.002    0.002    0.002    0.002 ops.py:2691(_as_graph_def)
+      153    0.001    0.000    0.002    0.000 errors_impl.py:467(__exit__)
+     2120    0.002    0.000    0.002    0.000 enum.py:515(__new__)
+      835    0.002    0.000    0.002    0.000 {method 'argmax' of 'numpy.ndarray' objects}
+      453    0.001    0.000    0.002    0.000 session.py:1286(<genexpr>)
+     1208    0.001    0.000    0.002    0.000 tensor_shape.py:381(as_dimension)
+      151    0.002    0.000    0.002    0.000 training.py:26(_standardize_input_data)
+      308    0.001    0.000    0.002    0.000 contextlib.py:85(__exit__)
+     3322    0.001    0.000    0.002    0.000 ops.py:473(__hash__)
+    10960    0.002    0.000    0.002    0.000 {built-in method math.sqrt}
+      616    0.001    0.000    0.002    0.000 {built-in method builtins.next}
+     1059    0.001    0.000    0.002    0.000 compat.py:46(as_bytes)
+      153    0.000    0.000    0.002    0.000 tensorflow_backend.py:114(learning_phase)
+      835    0.002    0.000    0.002    0.000 tree_node.py:78(update_values)
+      302    0.001    0.000    0.002    0.000 abc.py:178(__instancecheck__)
+      308    0.000    0.000    0.002    0.000 contextlib.py:157(helper)
+     1137    0.001    0.000    0.001    0.000 {built-in method numpy.core.multiarray.where}
+     1534    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}
+      757    0.000    0.000    0.001    0.000 ops.py:109(_as_graph_element)
+      610    0.001    0.000    0.001    0.000 ops.py:4334(get_controller)
+      151    0.001    0.000    0.001    0.000 shape_base.py:255(expand_dims)
+      302    0.000    0.000    0.001    0.000 session_ops.py:273(_get_handle_mover)
+      604    0.001    0.000    0.001    0.000 tensor_shape.py:83(is_compatible_with)
+      302    0.001    0.000    0.001    0.000 {built-in method numpy.core.multiarray.concatenate}
+      302    0.001    0.000    0.001    0.000 session.py:1038(_feed_fn)
+      915    0.001    0.000    0.001    0.000 ops.py:4317(get_default)
+      302    0.001    0.000    0.001    0.000 session_ops.py:253(_get_handle_feeder)
+      153    0.000    0.000    0.001    0.000 errors_impl.py:463(__enter__)
+      308    0.001    0.000    0.001    0.000 contextlib.py:59(__init__)
+      151    0.000    0.000    0.001    0.000 ops.py:5058(_assert_collection_is_ok)
+      308    0.000    0.000    0.001    0.000 contextlib.py:79(__enter__)
+      604    0.001    0.000    0.001    0.000 tensor_shape.py:27(__init__)
+      151    0.000    0.000    0.001    0.000 training.py:994(_make_predict_function)
+     4262    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
+      453    0.000    0.000    0.001    0.000 session.py:437(_assert_fetchable)
+      151    0.000    0.000    0.001    0.000 training.py:340(_make_batches)
+      606    0.001    0.000    0.001    0.000 ops.py:297(graph)
+      151    0.001    0.000    0.001    0.000 {method 'flatten' of 'numpy.generic' objects}
+     3608    0.001    0.000    0.001    0.000 {built-in method builtins.len}
+      152    0.000    0.000    0.001    0.000 context.py:327(in_eager_mode)
+        1    0.000    0.000    0.001    0.001 tensorflow_backend.py:2479(function)
+      150    0.000    0.000    0.001    0.000 game.py:13(__init__)
+      153    0.000    0.000    0.001    0.000 c_api_util.py:29(__init__)
+      607    0.001    0.000    0.001    0.000 ops.py:1925(type)
+      151    0.001    0.000    0.001    0.000 tree_node.py:24(__init__)
+      150    0.000    0.000    0.001    0.000 game.py:118(swap_turn)
+     1059    0.001    0.000    0.001    0.000 {method 'encode' of 'str' objects}
+      604    0.001    0.000    0.001    0.000 _weakrefset.py:70(__contains__)
+      302    0.000    0.000    0.001    0.000 ops.py:4224(is_feedable)
+     3328    0.001    0.000    0.001    0.000 {built-in method builtins.id}
+     2572    0.001    0.000    0.001    0.000 enum.py:597(value)
+      153    0.000    0.000    0.001    0.000 c_api_util.py:32(__del__)
+        1    0.000    0.000    0.001    0.001 tensorflow_backend.py:2429(__init__)
+      151    0.001    0.000    0.001    0.000 {built-in method numpy.core.multiarray.arange}
+      453    0.000    0.000    0.001    0.000 session.py:287(build_results)
+      152    0.000    0.000    0.000    0.000 topology.py:1948(uses_learning_phase)
+      302    0.000    0.000    0.000    0.000 ops.py:2611(version)
+      604    0.000    0.000    0.000    0.000 tensor_shape.py:473(ndims)
+        1    0.000    0.000    0.000    0.000 control_flow_ops.py:2907(group)
+      453    0.000    0.000    0.000    0.000 ops.py:4232(is_fetchable)
+      151    0.000    0.000    0.000    0.000 training.py:351(<listcomp>)
+      150    0.000    0.000    0.000    0.000 {method 'copy' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.sorted}
+      152    0.000    0.000    0.000    0.000 six.py:586(iteritems)
+      151    0.000    0.000    0.000    0.000 ops.py:4401(get_default_session)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+      151    0.000    0.000    0.000    0.000 session.py:435(<listcomp>)
+        1    0.000    0.000    0.000    0.000 gen_control_flow_ops.py:283(no_op)
+      153    0.000    0.000    0.000    0.000 {built-in method _pywrap_tensorflow_internal.TF_NewStatus}
+        1    0.000    0.000    0.000    0.000 op_def_library.py:339(_apply_op_helper)
+     1208    0.000    0.000    0.000    0.000 session.py:708(graph)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:1274(array_repr)
+      302    0.000    0.000    0.000    0.000 tensorflow_backend.py:301(is_sparse)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:457(array2string)
+      302    0.000    0.000    0.000    0.000 ops.py:372(get_shape)
+      153    0.000    0.000    0.000    0.000 {built-in method _pywrap_tensorflow_internal.TF_GetCode}
+        1    0.000    0.000    0.000    0.000 arrayprint.py:415(wrapper)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:432(_array2string)
+      151    0.000    0.000    0.000    0.000 training.py:1011(_check_num_samples)
+        1    0.000    0.000    0.000    0.000 ops.py:2853(create_op)
+      154    0.000    0.000    0.000    0.000 context.py:148(in_eager_mode)
+      758    0.000    0.000    0.000    0.000 ops.py:1942(graph)
+      302    0.000    0.000    0.000    0.000 dtypes.py:123(as_numpy_dtype)
+     1210    0.000    0.000    0.000    0.000 ops.py:287(op)
+      306    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+      454    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+      453    0.000    0.000    0.000    0.000 session.py:351(<listcomp>)
+      151    0.000    0.000    0.000    0.000 base.py:1202(isspmatrix)
+      453    0.000    0.000    0.000    0.000 session.py:124(<lambda>)
+      151    0.000    0.000    0.000    0.000 tree_node.py:75(is_leaf)
+      151    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+        1    0.000    0.000    0.000    0.000 arrayprint.py:363(_get_format_function)
+      607    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+      906    0.000    0.000    0.000    0.000 tensor_shape.py:78(value)
+      455    0.000    0.000    0.000    0.000 {built-in method builtins.iter}
+      153    0.000    0.000    0.000    0.000 {built-in method _pywrap_tensorflow_internal.TF_DeleteStatus}
+        1    0.000    0.000    0.000    0.000 arrayprint.py:319(<lambda>)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:754(__init__)
+      152    0.000    0.000    0.000    0.000 topology.py:1950(<listcomp>)
+        2    0.000    0.000    0.000    0.000 generic_utils.py:241(has_arg)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:780(fillFormat)
+      302    0.000    0.000    0.000    0.000 ops.py:292(dtype)
+      604    0.000    0.000    0.000    0.000 tensor_shape.py:468(dims)
+        2    0.000    0.000    0.000    0.000 inspect.py:3034(signature)
+      152    0.000    0.000    0.000    0.000 {method 'tolist' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 ops.py:2199(set_shapes_for_outputs)
+        2    0.000    0.000    0.000    0.000 inspect.py:2782(from_callable)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:639(_formatArray)
+      156    0.000    0.000    0.000    0.000 context.py:307(context)
+      302    0.000    0.000    0.000    0.000 session.py:125(<lambda>)
+        2    0.000    0.000    0.000    0.000 inspect.py:2176(_signature_from_callable)
+     17/1    0.000    0.000    0.000    0.000 arrayprint.py:648(recurser)
+      302    0.000    0.000    0.000    0.000 ops.py:314(shape)
+      453    0.000    0.000    0.000    0.000 session.py:284(unique_fetches)
+      156    0.000    0.000    0.000    0.000 ops.py:4507(_GetGlobalDefaultGraph)
+        1    0.000    0.000    0.000    0.000 ops.py:2158(call_with_requiring)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:588(call_cpp_shape_fn)
+        1    0.000    0.000    0.000    0.000 ops.py:1367(__init__)
+      152    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 common_shapes.py:650(_call_cpp_shape_fn_impl)
+        2    0.000    0.000    0.000    0.000 inspect.py:2095(_signature_from_function)
+      151    0.000    0.000    0.000    0.000 session.py:344(unique_fetches)
+        2    0.000    0.000    0.000    0.000 ops.py:4899(__enter__)
+       16    0.000    0.000    0.000    0.000 arrayprint.py:862(__call__)
+      152    0.000    0.000    0.000    0.000 game.py:88(action_space_size)
+      151    0.000    0.000    0.000    0.000 session.py:442(fetches)
+       17    0.000    0.000    0.000    0.000 arrayprint.py:837(<genexpr>)
+       32    0.000    0.000    0.000    0.000 {built-in method numpy.core.multiarray.dragon4_positional}
+        1    0.000    0.000    0.000    0.000 ops.py:4287(control_dependencies)
+      151    0.000    0.000    0.000    0.000 session.py:450(targets)
+       17    0.000    0.000    0.000    0.000 arrayprint.py:832(<genexpr>)
+        1    0.000    0.000    0.000    0.000 ops.py:3933(control_dependencies)
+        1    0.000    0.000    0.000    0.000 {built-in method _pywrap_tensorflow_internal.RunCppShapeInference}
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:1934(any)
+        1    0.000    0.000    0.000    0.000 ops.py:2530(_extract_stack)
+        1    0.000    0.000    0.000    0.000 ops.py:1312(_NodeDef)
+        2    0.000    0.000    0.000    0.000 inspect.py:2713(__init__)
+       11    0.000    0.000    0.000    0.000 inspect.py:2434(__init__)
+        3    0.000    0.000    0.000    0.000 {method 'SerializeToString' of 'google.protobuf.pyext._message.CMessage' objects}
+        3    0.000    0.000    0.000    0.000 ops.py:4575(_get_graph_from_inputs)
+        1    0.000    0.000    0.000    0.000 ops.py:1824(_recompute_node_def)
+        4    0.000    0.000    0.000    0.000 ops.py:3423(name_scope)
+       16    0.000    0.000    0.000    0.000 arrayprint.py:625(_extendLine)
+        2    0.000    0.000    0.000    0.000 numeric.py:2460(seterr)
+        1    0.000    0.000    0.000    0.000 mcts.py:14(__init__)
+        1    0.000    0.000    0.000    0.000 copy.py:132(deepcopy)
+        1    0.000    0.000    0.000    0.000 numeric.py:2857(__enter__)
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.max}
+        1    0.000    0.000    0.000    0.000 ops.py:2579(_add_op)
+        2    0.000    0.000    0.000    0.000 ops.py:4934(__exit__)
+        2    0.000    0.000    0.000    0.000 inspect.py:485(unwrap)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:67(_make_options_dict)
+        2    0.000    0.000    0.000    0.000 {built-in method utcnow}
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:2222(amax)
+       16    0.000    0.000    0.000    0.000 {method 'split' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 {method 'ByteSize' of 'google.protobuf.pyext._message.CMessage' objects}
+        1    0.000    0.000    0.000    0.000 {method 'extend' of 'google.protobuf.pyext._message.RepeatedCompositeContainer' objects}
+        1    0.000    0.000    0.000    0.000 ops.py:3889(_control_dependencies_for_inputs)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:1219(dtype_is_implied)
+        1    0.000    0.000    0.000    0.000 mcts.py:85(rank_moves)
+        1    0.000    0.000    0.000    0.000 ops.py:1831(<listcomp>)
+       13    0.000    0.000    0.000    0.000 inspect.py:2758(<genexpr>)
+        2    0.000    0.000    0.000    0.000 registry.py:78(lookup)
+        1    0.000    0.000    0.000    0.000 _methods.py:25(_amax)
+        3    0.000    0.000    0.000    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
+        2    0.000    0.000    0.000    0.000 ops.py:4885(__init__)
+        2    0.000    0.000    0.000    0.000 numeric.py:2560(geterr)
+        1    0.000    0.000    0.000    0.000 numeric.py:2862(__exit__)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:2323(amin)
+        1    0.000    0.000    0.000    0.000 topology.py:1961(state_updates)
+        1    0.000    0.000    0.000    0.000 tensor_shape.py:812(as_proto)
+        1    0.000    0.000    0.000    0.000 context.py:322(in_graph_mode)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:310(_get_formatdict)
+       17    0.000    0.000    0.000    0.000 arrayprint.py:838(<genexpr>)
+       11    0.000    0.000    0.000    0.000 {method 'isidentifier' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 profiler.py:19(__exit__)
+        1    0.000    0.000    0.000    0.000 op_def_library.py:83(_Flatten)
+        1    0.000    0.000    0.000    0.000 {method '__deepcopy__' of 'google.protobuf.pyext._message.CMessage' objects}
+        1    0.000    0.000    0.000    0.000 {method 'CopyFrom' of 'google.protobuf.pyext._message.CMessage' objects}
+        2    0.000    0.000    0.000    0.000 inspect.py:505(_is_wrapper)
+        1    0.000    0.000    0.000    0.000 _methods.py:28(_amin)
+        1    0.000    0.000    0.000    0.000 numeric.py:495(asanyarray)
+        2    0.000    0.000    0.000    0.000 {method 'get' of 'mappingproxy' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.all}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.locals}
+        1    0.000    0.000    0.000    0.000 ops.py:1869(inputs)
+        1    0.000    0.000    0.000    0.000 ops.py:3226(_next_id)
+        2    0.000    0.000    0.000    0.000 {method 'extend' of 'google.protobuf.pyext._message.RepeatedScalarContainer' objects}
+        4    0.000    0.000    0.000    0.000 inspect.py:159(isfunction)
+        1    0.000    0.000    0.000    0.000 ops.py:3535(unique_name)
+        1    0.000    0.000    0.000    0.000 ops.py:3812(__init__)
+        1    0.000    0.000    0.000    0.000 ops.py:3847(__enter__)
+        1    0.000    0.000    0.000    0.000 ops.py:3857(__exit__)
+        1    0.000    0.000    0.000    0.000 ops.py:3924(_record_op_seen_by_control_dependencies)
+        2    0.000    0.000    0.000    0.000 context.py:144(in_graph_mode)
+       17    0.000    0.000    0.000    0.000 arrayprint.py:839(<genexpr>)
+        2    0.000    0.000    0.000    0.000 ops.py:2368(_name_from_scope_name)
+        1    0.000    0.000    0.000    0.000 ops.py:3743(_apply_device_functions)
+        2    0.000    0.000    0.000    0.000 compat.py:68(as_text)
+        1    0.000    0.000    0.000    0.000 copy.py:252(_keep_alive)
+        1    0.000    0.000    0.000    0.000 numeric.py:2853(__init__)
+        2    0.000    0.000    0.000    0.000 {built-in method numpy.core.umath.seterrobj}
+        4    0.000    0.000    0.000    0.000 {built-in method numpy.core.umath.geterrobj}
+        1    0.000    0.000    0.000    0.000 {method 'total_seconds' of 'datetime.timedelta' objects}
+        1    0.000    0.000    0.000    0.000 {method 'astype' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method sys.exc_info}
+        2    0.000    0.000    0.000    0.000 {built-in method sys.getrecursionlimit}
+        1    0.000    0.000    0.000    0.000 {method 'values' of 'mappingproxy' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+        5    0.000    0.000    0.000    0.000 {built-in method builtins.issubclass}
+        4    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        4    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 {method 'discard' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'update' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 tree_node.py:83(is_visited)
+        1    0.000    0.000    0.000    0.000 op_def_library.py:781(<listcomp>)
+        1    0.000    0.000    0.000    0.000 ops.py:1446(<genexpr>)
+        3    0.000    0.000    0.000    0.000 ops.py:1634(_id)
+        1    0.000    0.000    0.000    0.000 ops.py:1827(<listcomp>)
+        1    0.000    0.000    0.000    0.000 ops.py:1849(__init__)
+        1    0.000    0.000    0.000    0.000 ops.py:1852(__iter__)
+       15    0.000    0.000    0.000    0.000 ops.py:2566(_extract_frame_info)
+        3    0.000    0.000    0.000    0.000 ops.py:2570(_check_not_finalized)
+        1    0.000    0.000    0.000    0.000 ops.py:2627(graph_def_versions)
+        3    0.000    0.000    0.000    0.000 ops.py:2847(building_function)
+       11    0.000    0.000    0.000    0.000 inspect.py:2483(name)
+        6    0.000    0.000    0.000    0.000 inspect.py:2495(kind)
+        3    0.000    0.000    0.000    0.000 inspect.py:2788(parameters)
+        1    0.000    0.000    0.000    0.000 ops.py:3869(add_op)
+        1    0.000    0.000    0.000    0.000 ops.py:3875(_push_control_dependencies_controller)
+        1    0.000    0.000    0.000    0.000 ops.py:3878(_pop_control_dependencies_controller)
+        1    0.000    0.000    0.000    0.000 ops.py:3882(_current_control_dependencies)
+        1    0.000    0.000    0.000    0.000 arrayprint.py:72(<dictcomp>)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.callable}
+        5    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'reverse' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 op_def_library.py:86(<listcomp>)
+        1    0.000    0.000    0.000    0.000 op_def_library.py:88(<listcomp>)
+        2    0.000    0.000    0.000    0.000 op_def_library.py:248(_MaybeColocateWith)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:664(<listcomp>)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:666(<listcomp>)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:674(<listcomp>)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:703(<listcomp>)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:706(<listcomp>)
+        1    0.000    0.000    0.000    0.000 common_shapes.py:708(<listcomp>)
+        1    0.000    0.000    0.000    0.000 ops.py:1439(<listcomp>)
+        4    0.000    0.000    0.000    0.000 ops.py:1839(outputs)
+        3    0.000    0.000    0.000    0.000 ops.py:1947(node_def)
+        1    0.000    0.000    0.000    0.000 ops.py:2605(_c_graph)
+        1    0.000    0.000    0.000    0.000 ops.py:2675(_get_control_flow_context)
+        1    0.000    0.000    0.000    0.000 ops.py:3865(control_inputs)
+        1    0.000    0.000    0.000    0.000 ops.py:3907(<listcomp>)
+        1    0.000    0.000    0.000    0.000 ops.py:3921(<listcomp>)
+
+
+
