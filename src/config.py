@@ -7,12 +7,12 @@ WORK_FOLDER = 'bin/'
 
 DEFAULT_NEURAL_NET_SETTINGS = {
     'no_of_possible_actions' : None,      # The number of actions the softmax layer produces
-    'value_hidden_size' : 64,             # Size of hidden layer in value head 
-    'res_layer_n' : 3,                    # The number of residual layers
-    'filter_n' : 128,                     # The number of filters in a conv layer
+    'value_hidden_size' : 256,             # Size of hidden layer in value head 
+    'res_layer_n' : 8,                    # The number of residual layers
+    'filter_n' : 160,                     # The number of filters in a conv layer
     'kernel_size' : 3,
-    'batch_size' : 32,                    
-    'epochs' : 5,
+    'batch_size' : 100,                    
+    'epochs' : 2,
     'verbose' : 0,
     'validation_split' : 0.05,
     'input_shape' : None,
@@ -29,16 +29,16 @@ DEFAULT_NEURAL_NET_SETTINGS = {
 MINIMUM_TEMPERATURE_ACCEPTED = 0.2
 
 # How many seconds to think on a move while training
-DEFAULT_TRAIN_THINK_TIME = 0.3
+DEFAULT_TRAIN_THINK_TIME = 1.2
+DEFAULT_NUMBER_OF_SIMULATIONS = 150
 
 # The maximum number of positions to save
-MEMORY_SIZE = 2000
+MEMORY_SIZE = 100000
 
-NO_OF_EPISODES = 4
-NO_OF_ITERATIONS = 100
-NO_OF_GAMES_TO_BATTLE = 30
-SAVE_THRESHOLD = 0.55
-
+NO_OF_EPISODES = 150
+NO_OF_ITERATIONS = 50
+NO_OF_GAMES_TO_BATTLE = 20
+SAVE_THRESHOLD = 0.5501
 
 
 # These variables must be overridden in the game's config files

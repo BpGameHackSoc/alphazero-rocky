@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.DS_Store
 
 # C extensions
 *.so
@@ -104,4 +105,8 @@ ENV/
 #pycharm
 .idea
 
+#bin 
+bin
+
+#dummy runner
 run_test.py

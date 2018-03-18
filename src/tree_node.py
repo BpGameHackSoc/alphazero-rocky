@@ -6,9 +6,6 @@ class ThreadException(Exception):
     pass
 
 
-
-
-
 def config(self):
     value, probabilities = nn.predict(inp)
     self.V = value.flatten()[0]
@@ -16,13 +13,13 @@ def config(self):
     self.children_p = probabilities.flatten()
     self.children = [None] * self.children_p.size
 
-use_terminal_score = False
+use_terminal_score = True
 class Node(object):
     """
     Responsible for keeping the data of tree node for Monte-Carlo Tree Search
     """
 
-    C = math.sqrt(2)
+    C = math.e
 
     def __init__(self, state, p=0, parent=None):
         self.state = state
@@ -61,6 +58,7 @@ class Node(object):
 
     def evaluate(self, model):
         if self.V is None:
+            parent_turn = self.parent.state.turn() if self.parent else 0
             v, p = self.__get_prediction(model)
             self.V = v.flatten()[0]
             self.children_p = p
@@ -68,7 +66,6 @@ class Node(object):
                 self.is_terminal = True
                 if use_terminal_score:
                     self.V = self.get_terminal_score()
-        self.update_values(self.V)
 
     def __get_prediction(self, model):
         s = self.state.to_input()
@@ -90,11 +87,16 @@ class Node(object):
         return (self.W, self.Q, self.N)
 
     def get_children_data(self):
-        result = [child.get_aggragate_values for child in self.children]
-        return result
+        results = []
+        for child in self.children:
+            if child is None:
+                results.append(None)
+                continue
+            results.append(child.get_aggragate_values())
+        return results
 
     def get_terminal_score(self):
-        if self.state.winner == 0: # TODO use an abstract class for comparison
+        if self.state.winner() == 0: # TODO use an abstract class for comparison
             return 0
         return -1 # assuming that current player always loses in terminal state
 

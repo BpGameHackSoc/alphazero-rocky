@@ -54,12 +54,6 @@ class GameState(abc.ABC):
         '''
         pass
 
-    @abc.abstractmethod
-    def board_size(self):
-        '''
-            Returns with the size of the board.
-        '''
-        pass
 
     @abc.abstractmethod
     def action_space_size(self):

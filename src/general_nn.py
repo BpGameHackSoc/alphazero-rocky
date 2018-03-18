@@ -4,7 +4,9 @@ from keras.models import Sequential, load_model, Model
 from keras.layers.merge import Add
 from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
+from keras import optimizers
 from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
+import numpy as np
 
 class NeuralNetwork(abc.ABC):
     @abc.abstractmethod
@@ -31,8 +33,9 @@ class NeuralNetwork(abc.ABC):
         value = self.value_head(x)
         policy = self.policy_head(x)
         model = Model(inp, [value, policy])
+        sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(loss=['mean_squared_error', 'categorical_crossentropy'],
-                      optimizer='rmsprop')
+                      optimizer=sgd)
         self.model = model
 
     def res_layer(self, x, index):
@@ -52,14 +55,14 @@ class NeuralNetwork(abc.ABC):
         x = Dense(self.config['value_hidden_size'])(x)
         x = Activation('relu')(x)
         x = Dense(1)(x)
-        x = Activation('tanh')(x)
+        x = Activation('tanh', name='value')(x)
         return x
 
     def policy_head(self, x):
         x = self.conv_layer(x, 'policy_', filter_n=2, kernel_size=1)
         x = Flatten()(x)
         x = Dense(self.config['no_of_possible_actions'])(x)
-        x = Activation('softmax')(x)
+        x = Activation('softmax', name='policy')(x)
         return x
 
     def conv_layer(self, x, prefix, suffix='', original_x=None, **kwargs):
