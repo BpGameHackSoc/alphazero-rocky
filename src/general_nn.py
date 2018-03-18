@@ -4,6 +4,7 @@ from keras.models import Sequential, load_model, Model
 from keras.layers.merge import Add
 from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
+from keras.regularizers import l2
 from keras import optimizers
 from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
 import numpy as np
@@ -49,19 +50,19 @@ class NeuralNetwork(abc.ABC):
         return x
 
     def value_head(self, x):
-        x = self.conv_layer(x, 'value_', filter_n=1, kernel_size=1)
+        x = self.conv_layer(x, 'value_', filter_n=1, kernel_size=1, kernel_regularizer=l2(0.01))
         x = Flatten()(x)
         x = Activation('relu')(x)
-        x = Dense(self.config['value_hidden_size'])(x)
+        x = Dense(self.config['value_hidden_size'], kernel_regularizer=l2(0.01))(x)
         x = Activation('relu')(x)
-        x = Dense(1)(x)
+        x = Dense(1, kernel_regularizer=l2(0.01))(x)
         x = Activation('tanh', name='value')(x)
         return x
 
     def policy_head(self, x):
-        x = self.conv_layer(x, 'policy_', filter_n=2, kernel_size=1)
+        x = self.conv_layer(x, 'policy_', filter_n=2, kernel_size=1, kernel_regularizer=l2(0.01))
         x = Flatten()(x)
-        x = Dense(self.config['no_of_possible_actions'])(x)
+        x = Dense(self.config['no_of_possible_actions'], kernel_regularizer=l2(0.01))(x)
         x = Activation('softmax', name='policy')(x)
         return x
 
@@ -85,6 +86,7 @@ class NeuralNetwork(abc.ABC):
             kernel_size=kernel_size,
             padding='same',
             strides=1,
+            kernel_regularizer=l2(0.01),
             data_format='channels_first',
             name=prefix+"_conv"+suffix
         )(x)

@@ -38,6 +38,7 @@ class Arena(object):
                 state = state.move(move)
                 agent_index = 1 - agent_index
             self.__show_state(verbose, state)
+            self.__display(verbose, state, self.agents[agent_index])
             wins += self.__determine_scores(state.winner(), starting_agent_index)
         return wins
 
