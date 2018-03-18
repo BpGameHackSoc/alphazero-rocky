@@ -1,10 +1,30 @@
 # Rocky (AlphaZero at home)
 
-Rocky is a simple implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and is under development.
-
-## Goals
+Rocky is a general, home-made implementation of AlphaZero. The engine is flexible for any perfect-information, 2-player zero-sum games, such as tic-tac-toe, Gomoku, 3d-Gomoku, Connect-4 or Othello. The code was written in python and we're still looking for improvements.
 
 The goal of this project is to understand the algorithm of AlphaZero and go beyond, finding possible improvements. Although DeepMind's program's performance is mind-blowing, it still requires thousands of TPUs to be trained and is not convenient for home use yet. Maybe we'll find a way to speed up and simplify the training. Fingers crossed.
+
+## Achievements
+
+<img src="https://i.imgur.com/ldonPOu.gif" alt="https://imgur.com/ldonPOu" width="220" align="right" />
+
+
+We have run the algorithm on a well-known game called Connect-4. The engine started from scratch and was studying for 60 hours on a Intel® Core™ 2 Quad, 2.40 GHz CPU. Interestingly while the engine was exploring the game it picked up different trends and openings. An example self-play can be seen on the right.
+
+In order to test its real performance, we took the 24-hour-generation version of the engine, increased the number of simulations to 1200 and played it against our colleagues, meaning a group of data scientists. The early version acquired a knowledge that was enough to beat the human team 5 to 1.
+
+Fun fact: The learning was stopped by an accidental windows update & reboot. :laughing:
+
+Afterall we've decided the engine managed to reach a high level of gameplay thus there was no point to continue the teaching. The performance of the engine can be seen below. I chose the random player to have 0 ELO points.
+
+<p></p>
+
+<p align="center" style="margin-top: 30px; margin-bottom:30px">
+ <img src="https://i.imgur.com/UnMMIvh.png" alt="https://imgur.com/UnMMIvh" width="400" align="middle" />
+</p>
+
+<p></p>
+
 
 ## Possible improvements on AlphaZero
 
@@ -44,9 +64,16 @@ Although DeepMind had the opportunity to run 1600 simulations in about 0.4s, eve
 
 ## Fundamental differences between Rocky and AlphaZero
 
- - This engine uses ___ CPU and ____ GPU, while AlphaZero used 5000 TPUs
+ - AlphaZero used 5000 TPUs, whereas for us only one CPU and one GPU were available
  - Everything is executed on one core, no parallelization was done
  - To speed up the learning, the terminal nodes in the MCTS return with the true value (-1, 0, 1)
+ 
+## Developers
+
+[Gergely Halacsy](https://www.linkedin.com/in/gergely-hal%C3%A1csy-808968150/)
+
+[Gergely Papp](https://www.linkedin.com/in/gergopool/)
+ 
  
 ## References
 
