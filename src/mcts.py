@@ -94,7 +94,7 @@ class MCTS():
         """
         :param parent_node: where moves are calculated from
         :param explore_temp: Controls the willingness to explore similar to softmax scaling
-        :return: node after the calculated move
+        :return: node after the calculated move, the used probabilities
         """
         ranks = self.rank_moves(self.root_node).astype(float)
         if explore_temp < MINIMUM_TEMPERATURE_ACCEPTED:
@@ -106,7 +106,7 @@ class MCTS():
             move_index = int(np.random.choice(np.arange(ranks.size), 1, p=ranks))
         else:
             move_index = ranks.argmax()
-        return move_index
+        return move_index, ranks
 
     def backpropagation(self, node):
         v = node.V

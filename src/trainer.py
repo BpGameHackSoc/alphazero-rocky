@@ -81,7 +81,9 @@ class Trainer(object):
     def play_one_episode(self):
         state = self.start_state.copy()
         observations = deque()
+        rewards = deque()
         obs_extend = observations.extend
+        rew_append = rewards.append
         root = None
         possible_move_len = state.action_space_size()
         while not state.is_over():
@@ -90,11 +92,14 @@ class Trainer(object):
             probabilities = self.best_student.last_run['probabilities']
             root = self.best_student.last_run['chosen_child']
             obs_extend(state.to_all_symmetry_input(probabilities))
+            rew_append([self.best_student.last_run['predicted_outcome'],
+                        self.best_student.last_run['confidence']])
             state = state.move(move)
 
         # Saving last state in order determine what means winning
+        probabilities = self.best_student.last_run['probabilities']
         probabilities = np.full((possible_move_len, ), 1./possible_move_len)
-        observations.extend(state.to_all_symmetry_input(probabilities))
+        obs_extend(state.to_all_symmetry_input(probabilities))
 
         # Update value as: 1 for winner, -1 for losers, 0 for draw
         winner = state.winner()
@@ -105,14 +110,14 @@ class Trainer(object):
     def learn(self):
         n = self.no_of_games_played
         for i in range(n, n + self.iterations):
-            sleep(0.3)
+            sleep(0.1)
             tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
             # if len(self.observations) == 0:
             #     tqdm.write(' - Using random plays, memory is empty.. - ')
             #     sleep(0.3)
             #     self.fill_memory_with_random_plays()
             # else:
-            sleep(0.3)
+            sleep(0.1)
             for j in trange(self.episodes):
                 self.observations.extend(self.play_one_episode())
             self.challenger = self.train_counterparty()
@@ -120,7 +125,7 @@ class Trainer(object):
             self.challenger.learning = False
             arena = Arena(self.game_type, self.best_student, self.challenger)
             wins = arena.war(NO_OF_GAMES_TO_BATTLE)
-            sleep(0.3)
+            sleep(0.1)
             tqdm.write('Match result is : ' +  str(wins))
             if self.challanger_takes_crown(wins):
                 tqdm.write('Accepted!')

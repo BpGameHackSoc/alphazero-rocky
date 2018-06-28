@@ -18,29 +18,36 @@ class Arena(object):
                 return: The number of wins on agent1's and agent2 sides respectively.
         '''
         wins = np.array([0., 0.])
+        history = []
         for game_pair_index in trange(n, desc='Arena'):
-            wins += self.battle(verbose)
-        return wins
+            battle_wins, battle_history = self.battle(verbose)
+            wins += battle_wins
+            history.append(battle_history)
+        return wins, history
 
     def battle(self, verbose=0):
         '''
             Plays two games between the agents.
                 verbose: see at self.war()
         '''
+        move_history = []
         wins = np.array([0., 0.])
         for starting_agent_index in range(2):
+            current_move_history = []
             agent_index = starting_agent_index
             state = self.__init_state()
             while not state.is_over():
                 self.__show_state(verbose, state)
                 move = self.agents[agent_index].move(state)
+                current_move_history.append(move)
                 self.__display(verbose, state, self.agents[agent_index])
                 state = state.move(move)
                 agent_index = 1 - agent_index
             self.__show_state(verbose, state)
             self.__display(verbose, state, self.agents[agent_index])
             wins += self.__determine_scores(state.winner(), starting_agent_index)
-        return wins
+            move_history.append(current_move_history)
+        return wins, move_history
 
     def __show_state(self, verbose, state):
         if verbose >= 1:
