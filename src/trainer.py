@@ -28,6 +28,7 @@ class Trainer(object):
         self.iterations = NO_OF_ITERATIONS
         self.episodes = NO_OF_EPISODES
         self.memory_size = MEMORY_SIZE
+        self.use_temporal_difference = USE_TEMPORAL_DIFFERENCE
         self.no_of_games_played = self.__get_no_of_games_played(model_path)
         self.observations = self.__get_initial_observations(memory_path)
         self.config()
@@ -104,7 +105,15 @@ class Trainer(object):
         # Update value as: 1 for winner, -1 for losers, 0 for draw
         winner = state.winner()
         for i in range(len(observations)):
-            observations[i][1] *= winner.value
+            observations[i][1] *= float(winner.value)
+
+        # temporal difference study if requested
+        if self.use_temporal_difference:
+            lamda = 1.
+            for i in range(len(observations)-1,-1,-1):
+                lamda *= rewards[i][1]
+                observations[i][1] = (1-lamda) * rewards[i][0] + lamda * observations[i][1]
+
         return observations
 
     def learn(self):

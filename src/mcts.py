@@ -104,9 +104,12 @@ class MCTS():
             ranks /= ranks.sum()
         if self.learning and explore_temp > 0:
             move_index = int(np.random.choice(np.arange(ranks.size), 1, p=ranks))
+            scaled_ranks = ranks
         else:
             move_index = ranks.argmax()
-        return move_index, ranks
+            scaled_ranks = np.zeros(ranks.size)
+            scaled_ranks[move_index] = 1.
+        return move_index, scaled_ranks
 
     def backpropagation(self, node):
         v = node.V

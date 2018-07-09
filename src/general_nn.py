@@ -52,7 +52,7 @@ class NeuralNetwork(abc.ABC):
     def value_head(self, x):
         x = self.conv_layer(x, 'value_', filter_n=1, kernel_size=1, kernel_regularizer=l2(0.01))
         x = Flatten()(x)
-        x = Activation('relu')(x)
+        x = Activation('linear')(x)
         x = Dense(self.config['value_hidden_size'], kernel_regularizer=l2(0.01))(x)
         x = Activation('relu')(x)
         x = Dense(1, kernel_regularizer=l2(0.01))(x)
