@@ -1,6 +1,7 @@
 from src.games.gomoku.game import GomokuState
 from src.games.gomoku3d.game import Gomoku3dState
 from src.games.connect4.game import Connect4State
+from src.games.uttt.game import UTTTState
 import numpy as np
 from tqdm import tqdm, trange
 
@@ -83,4 +84,6 @@ class Arena(object):
             return Gomoku3dState()
         if self.game_type == 'connect4':
             return Connect4State()
+        if self.game_type == 'uttt':
+            return UTTTState()
         raise Exception('Unknown game: ' + str(self.game_type))

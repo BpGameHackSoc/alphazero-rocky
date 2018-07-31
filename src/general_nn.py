@@ -8,6 +8,7 @@ from keras.regularizers import l2
 from keras import optimizers
 from src.config import DEFAULT_NEURAL_NET_SETTINGS, WORK_FOLDER
 import numpy as np
+import string
 
 class NeuralNetwork(abc.ABC):
     @abc.abstractmethod

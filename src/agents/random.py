@@ -11,8 +11,8 @@ class RandomAgent(Agent):
 
     def move(self, state, **kwargs):
         valid = state.valid_moves()
-        return np.random.choice(valid)
-
+        res = valid[np.random.choice(len(valid))]
+        return res
     def evaluate(self, state):
         if not state.is_over():
             print('Random from ' + str(state.valid_moves()))
