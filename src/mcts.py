@@ -54,10 +54,14 @@ class MCTS():
                                      0.25 * np.random.dirichlet([1./n] * n))
 
     def run_one_simulation(self):
+        """Traverse to a leaf and update statistics with back prop"""
         last_node = self.simulate_to_leaf()
         self.backpropagation(last_node)
 
     def simulate_to_leaf(self):
+        """Iteratively select a child from the current node until a leaf or
+         a terminal node is encountered (which is inherently a leaf)"""
+
         node = self.root_node
         while not node.is_terminal:
             move_index = self.select(node)
@@ -68,14 +72,15 @@ class MCTS():
             node = new_node
         return node
 
-
     def select(self, node):
+        "Select a move from node and return it"
         val_moves = node.state.valid_moves()
         scores = np.array([self.UCT_score(node, move) for move in val_moves])
         best_index = np.argmax(scores)
         return val_moves[best_index]
 
     def UCT_score(self, parent, index):
+        """Calculate the uppper confidence bound score as it was calculated in the AlphaZero paper"""
         node = parent.children[index]
         if node is not None:
             return node.Q + Node.C * node.p * math.sqrt(parent.N) / (node.N+1)
@@ -83,6 +88,9 @@ class MCTS():
             return Node.C * parent.children_p[index] * math.sqrt(parent.N)
 
     def rank_moves(self, node):
+        """Turn the aggregate statistics from the tree into scores at the root of the mcts tree
+        This uses the 'robust' way of doing this, using the visit count for each child"""
+        
         ranks = np.zeros(len(node.children))
         for i, child in enumerate(node.children):
             if not child is None:
@@ -94,7 +102,7 @@ class MCTS():
         """
         :param parent_node: where moves are calculated from
         :param explore_temp: Controls the willingness to explore similar to softmax scaling
-        :return: node after the calculated move, the used probabilities
+        :return: node after the calculated move, the used probabilities - based on the mcts search, different from nns output
         """
         ranks = self.rank_moves(self.root_node).astype(float)
         if explore_temp < MINIMUM_TEMPERATURE_ACCEPTED:
