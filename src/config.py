@@ -40,7 +40,7 @@ NO_OF_ITERATIONS = 20
 NO_OF_GAMES_TO_BATTLE = 10
 SAVE_THRESHOLD = 0.5501
 
-USE_TEMPORAL_DIFFERENCE = True
+USE_TEMPORAL_DIFFERENCE = False
 
 
 # These variables must be overridden in the game's config files

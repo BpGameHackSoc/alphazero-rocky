@@ -6,6 +6,8 @@ from src.games.connect4.game import Connect4State
 from src.games.gomoku.neural_net import GomokuNN
 from src.games.gomoku3d.neural_net import Gomoku3dNN
 from src.games.connect4.neural_net import Connect4NN
+from src.games.uttt.neural_net import UTTTNN
+from src.games.uttt.game import UTTTState
 from src.config import *
 import src.games.gomoku.config as gomoku_config
 import src.games.gomoku3d.config as gomoku3d_config
@@ -37,6 +39,12 @@ class Trainer(object):
         if self.game_type == 'gomoku':
             nn = GomokuNN(self.model_path)
             self.start_state = GomokuState()
+            self.low_temp_threshold = gomoku_config.LOW_TEMP_THRESHOLD
+            self.high_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
+            self.temp_decay = gomoku_config.TEMP_DECAY
+        if self.game_type == 'uttt':
+            nn = UTTTNN(self.model_path)
+            self.start_state = UTTTState()
             self.low_temp_threshold = gomoku_config.LOW_TEMP_THRESHOLD
             self.high_temp_threshold = gomoku_config.HIGH_TEMP_THRESHOLD
             self.temp_decay = gomoku_config.TEMP_DECAY
@@ -108,7 +116,7 @@ class Trainer(object):
             observations[i][1] *= float(winner.value)
 
         # temporal difference study if requested
-        if self.use_temporal_difference:
+        if self.use_temporal_difference and False:
             lamda = 1.
             for i in range(len(observations)-1,-1,-1):
                 lamda *= rewards[i][1]
@@ -199,6 +207,8 @@ class Trainer(object):
             return Gomoku3dNN(model_name=model_name)
         if self.game_type == 'connect4':
             return Connect4NN(model_name=model_name)
+        if self.game_type == 'uttt':
+            return UTTTNN(model_name=model_name)
 
     def __temperature(self, move_count):
         if move_count <= self.low_temp_threshold:

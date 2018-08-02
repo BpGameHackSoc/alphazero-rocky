@@ -3,13 +3,14 @@ from src.general_player import Player
 from .errors import MoveError,BoardNotFinishedError,MoveInFinishedBoardError
 import numpy as np
 import copy
+import tensorflow as tf
 
-Player
+
 class UTTTState(GameState):
 
     BOARD_SIZE = 3
-    MAIN_DIAG_INDEXES = np.array([[0,0],[1,1],[2,2]])
-    MINOR_DIAG_INDEXES = np.array([[2,0],[1,1],[0,2]])
+    MAIN_DIAG_INDEXES = ([0,1,2],[0,1,2])
+    MINOR_DIAG_INDEXES = ([2,1,0],[0,1,2])
     PLAYER_ARRAY = [0, 0, 0]
     PLAYER_ARRAY[Player.FIRST] = np.full((BOARD_SIZE,),Player.FIRST)
     PLAYER_ARRAY[Player.SECOND] = np.full((BOARD_SIZE,), Player.SECOND)
@@ -63,6 +64,23 @@ class UTTTState(GameState):
         else:
             active_board = self.board[self.active_subgame]
             return np.argwhere(active_board==Player.NONE)
+
+    def move_to_move_index(self,move):
+        if self.active_subgame is None:
+            move = np.transpose(move)
+            return np.ravel_multi_index(move, self.board.shape)
+        else:
+            move = np.transpose(np.concatenate((self.active_subgame,move),axis=-1))
+            return np.ravel_multi_index(move, self.board.shape)
+    def move_index_to_move(self,move_index):
+        if self.active_subgame is None:
+            move = np.unravel_index(move_index,self.board.shape)
+            return move
+        else:
+            move = np.unravel_index(move_index,self.board.shape)
+            if move[:2] != self.active_subgame:
+                raise ValueError("Illegal move index {} resultes in move {}".format(move_index,move))
+            return move[2:]
 
     def apply_move_to_board(self,move,player):
         self.board[move] = player
@@ -170,8 +188,46 @@ class UTTTState(GameState):
         else:
             raise BoardNotFinishedError
 
-    def get_layers(self):
-        pass
+    def get_layers(self, board, gloabal_wins, active_subgame_):
+        vanilla_board = board
+        subgame_results = tf.one_hot(gloabal_wins +1,3,name='subgame_resuts')
+        if active_subgame_ is None:
+            active_subgame = 9
+        else:
+            active_subgame = np.ravel_multi_index(active_subgame_,board.shape[:2])
+        no_subgames = board[0,0,:,:].size
+        act_sub_t = tf.one_hot(active_subgame, no_subgames+1,name='active_subgame')
+        nearly_done = []
+        for subgame in vanilla_board.reshape(-1,*vanilla_board.shape[2:]).copy():
+            axes = np.concatenate((subgame, subgame.T,
+                                   self.get_main_diag(subgame)[None, :],
+                                   self.get_minor_diag(subgame)[None, :]), axis=0)
+            axes[(np.isin(np.count_nonzero(axes, axis=1), (0, 3))) & (
+                    np.count_nonzero(axes, axis=1) == np.absolute(np.sum(axes, axis=1)))] = 0
+            axes[(np.count_nonzero(axes, axis=1) != np.absolute(np.sum(axes, axis=1)))] = 1
+            pos_part = np.sum(axes, axis=1) >= 0
+            non_pos_part = ~pos_part
+            cont = np.zeros((8,),dtype=np.int64)
+            # np.ravel_multi_index(axes[pos_part].T,(2,2,2))
+            cont[pos_part] = np.ravel_multi_index(axes[pos_part].T.astype(np.int64), (2, 2, 2))
+            cont[non_pos_part] = np.ravel_multi_index(axes[non_pos_part].T.astype(np.int64), (2, 2, 2), 'wrap') + 7
+            cont = tf.one_hot(cont,14)
+            nearly_done.append(cont)
+        vanilla_board = vanilla_board.swapaxes(-2, -3).reshape((9, 9))
+        vanilla_board = vanilla_board[np.newaxis,...,np.newaxis]
+        threealogline = tf.reshape(tf.concat(nearly_done, axis=0), [-1])
+        subgame_res = tf.reshape(subgame_results, [-1])
+        active_sub = tf.reshape(act_sub_t, [-1])
+        try:
+            hand_features = tf.concat([threealogline, subgame_res, active_sub], axis=0)
+        except ValueError:
+            pass
+            raise
+        with tf.Session().as_default():
+            hand_features = np.array(hand_features.eval())
+        hand_features = hand_features[np.newaxis,...]
+        return [vanilla_board,hand_features]
+
         # n = BOARD_SIZE*BOARD_SIZE
         # x = np.zeros((3*BOARD_SIZE+2,BOARD_SIZE,BOARD_SIZE), dtype=int)
         # for dim in range(3):
@@ -186,35 +242,91 @@ class UTTTState(GameState):
         # x[-2] = self.board.reshape(-1,n)[:,0:n:BOARD_SIZE+1].reshape(4,4)
         # x[-1] = self.board.reshape(-1,n)[:,BOARD_SIZE-1:n-BOARD_SIZE+1:BOARD_SIZE-1].reshape(4,4)
         # return x
+    def reshape_board_to_2D(self,board):
+        new_board = board.swapaxes(-2, -3).reshape((9, 9))
+        return new_board
 
     def action_space_size(self):
         return self.board.size
 
     def to_all_symmetry_input(self, p):
-        # transformations = []
-        # p = p.reshape(BOARD_SIZE, BOARD_SIZE)
-        # for i in range(4):
-        #     rotated_board = self.board_rotation(i).copy()
-        #     rotated_p = np.rot90(p, i).copy()
-        #     one_input = [self.to_input(rotated_board),
-        #                  self.turn_color.value, rotated_p.reshape(-1)]
-        #     transformations.append(one_input)
-        #     flipped_board = np.flip(rotated_board, axis=1).copy()
-        #     flipped_p = np.flip(rotated_p, axis=0).copy()
-        #     one_input = [self.to_input(flipped_board),
-        #                  self.turn_color.value, flipped_p.reshape(-1)]
-        #     transformations.append(one_input)
-        # return transformations
+        try:
+            val_moves = self.val_moves
+        except AttributeError:
+            self.val_moves = self.valid_moves()
+            val_moves = self.val_moves
+        p = p.reshape((3,3,3,3))
+        transformations = []
+        for i in range(4):
+            rotated_board = self.rotate_4dim_shape(self.board,i).copy()
+            rotated_glob_wins = np.rot90(self.global_wins, i, (0, 1))
+            if self.active_subgame is None:
+                active_subgame = None
+            else:
+                active_subgame = self.rotate_2D_index(self.active_subgame,i,(3,3))
+            rotated_p = self.rotate_4dim_shape(p,i).copy()
+            one_input = [self.get_layers(rotated_board,rotated_glob_wins,active_subgame),
+                         self.turn(), rotated_p.reshape(-1)]
+            transformations.append(one_input)
+            rotated_board = self.flip_4dim_shape(rotated_board).copy()
+            rotated_glob_wins = np.flip(rotated_glob_wins, axis=0)
+            if active_subgame is not None:
+                active_subgame = self.flip_2D_index(active_subgame, (3, 3))
+            rotated_p = self.flip_4dim_shape(rotated_p).copy()
+            one_input = [self.get_layers(rotated_board,rotated_glob_wins,active_subgame),
+                         self.turn(), rotated_p.reshape(-1)]
+            transformations.append(one_input)
+        return transformations
         pass
 
-    def board_rotation(self, half_radians):
-        return np.rot90(self.board, half_radians, axes=(-2,-1))
+    def filter_by_valid(self,nnp,valid_moves):
+        """
+        Filter the probability distribution given by the neural network to only contain entries that correspond to
+        valid moves
+        :param nnp: 1D numpy array, probabilty output of nn
+        :param valid_moves: result of a self.valid_moves() call
+        :return: 1D numpy array only containing values whose indices corresponded to valid moves in the original array
+        """
+        nnp = nnp.reshape(self.board.shape)
+        if valid_moves.shape[1] == 4:
+            indices = np.transpose(valid_moves)
+            return nnp[tuple(indices)]
+        else:
+            subgame_filtered_nnp = nnp[self.active_subgame]
+            sub_indices = np.transpose(valid_moves)
+            return subgame_filtered_nnp[tuple(sub_indices)]
+
+    def rotate_4dim_shape(self, board,half_radians):
+        rotated_board = np.rot90(board, half_radians, (0, 1))
+        rotated_board = np.rot90(rotated_board, half_radians, (2, 3))
+        return rotated_board
+
+    def flip_4dim_shape(self, board):
+        rotated_p = np.flip(board, axis=0)
+        rotated_p = np.flip(rotated_p, axis=-2)
+        return rotated_p
+
+    def flip_2D_index(self,index,shape):
+        b = np.zeros(shape)
+        b[index] = 1
+        b = np.flip(b, axis=0)
+        act = np.nonzero(b)
+        return act
+
+    def rotate_2D_index(self,index,half_radians,shape):
+        b = np.zeros(shape)
+        b[index] = 1
+        b = np.rot90(b, half_radians, (0, 1))
+        act = np.nonzero(b)
+        return act
 
     def copy(self, swap=False):
-        pass
+        return copy.deepcopy(self)
 
     def swtich_player(self):
         self.curr_player = self.curr_player * -1
 
     def to_input(self, board=None):
-        pass
+        if board is None:
+            board = self.board
+        return self.get_layers(board, self.global_wins, self.active_subgame)

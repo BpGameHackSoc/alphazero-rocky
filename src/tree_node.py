@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import threading
+from .general_player import Player
 
 class ThreadException(Exception):
     pass
@@ -29,8 +30,10 @@ class Node(object):
         self.N = 0                  # The number of visits
         self.p = p                  # The probability of choosing this node from parent
         self.Q = 0
-        self.children = [None] * state.action_space_size() # The child-states  TODO replace with config value
-        self.children_p = []        # The probability distribution on child states
+        self.moves_to_children = state.valid_moves()
+        self.children = [None] * len(self.moves_to_children) # The child-states  TODO replace with config value
+        self.children_p = None        # The probability distribution on valid child states
+        self.children_p_all = None        # The probability distribution on all child states
         self.is_terminal = False
 
     def max_depth(self):
@@ -46,13 +49,13 @@ class Node(object):
                     m = current
             return m + 1
 
-    def define_child(self, move):
-        new_state = self.state.move(move)
-        self.children[move] = Node(new_state, p=self.children_p[move], parent=self)
-        return self.children[move]
+    def define_child(self, move_index):
+        new_state = self.state.move(self.moves_to_children[move_index])
+        self.children[move_index] = Node(new_state, p=self.children_p[move_index], parent=self)
+        return self.children[move_index]
 
-    def expand_and_evaluate(self,move,model):
-        new_node = self.define_child(move)
+    def expand_and_evaluate(self, move_index, model):
+        new_node = self.define_child(move_index)
         new_node.evaluate(model)
         return new_node
 
@@ -61,7 +64,9 @@ class Node(object):
             parent_turn = self.parent.state.turn() if self.parent else 0
             v, p = self.__get_prediction(model)
             self.V = v.flatten()[0]
-            self.children_p = p
+            self.children_p_all = p
+            self.children_p = self.state.filter_by_valid(p,self.moves_to_children)
+            self.children_p = self.children_p / np.sum(self.children_p)
             if self.state.is_over():
                 self.is_terminal = True
                 if use_terminal_score:
@@ -69,7 +74,12 @@ class Node(object):
 
     def __get_prediction(self, model):
         s = self.state.to_input()
-        v, p = model.predict(np.expand_dims(s, axis=0))
+        # v, p = model.predict(np.expand_dims(s, axis=0))
+        try:
+            v, p = model.predict(s)
+        except ValueError:
+            print("Handcrafted had shape {} and value {}".format(s[1].shape,s[1]))
+            raise
         return v.flatten()[0], p.flatten()
 
     def is_leaf(self):
@@ -96,7 +106,7 @@ class Node(object):
         return results
 
     def get_terminal_score(self):
-        if self.state.winner() == 0: # TODO use an abstract class for comparison
+        if self.state.winner() == Player.NONE: # TODO use an abstract class for comparison
             return 0
         return -1 # assuming that current player always loses in terminal state
 

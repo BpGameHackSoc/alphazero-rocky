@@ -115,3 +115,6 @@ class GameState(abc.ABC):
                 [state, (int) player_on_turn, probabilities]]
         '''
         pass
+
+    def filter_by_valid(self, nnp, valid_moves):
+        return nnp[valid_moves]

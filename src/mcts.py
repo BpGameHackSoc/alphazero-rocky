@@ -74,10 +74,10 @@ class MCTS():
 
     def select(self, node):
         "Select a move from node and return it"
-        val_moves = node.state.valid_moves()
-        scores = np.array([self.UCT_score(node, move) for move in val_moves])
+        move_indexes = range(len(node.children))
+        scores = np.array([self.UCT_score(node, move) for move in move_indexes])
         best_index = np.argmax(scores)
-        return val_moves[best_index]
+        return best_index
 
     def UCT_score(self, parent, index):
         """Calculate the uppper confidence bound score as it was calculated in the AlphaZero paper"""
@@ -90,11 +90,11 @@ class MCTS():
     def rank_moves(self, node):
         """Turn the aggregate statistics from the tree into scores at the root of the mcts tree
         This uses the 'robust' way of doing this, using the visit count for each child"""
-        
-        ranks = np.zeros(len(node.children))
+        ranks = np.zeros(node.state.action_space_size())
         for i, child in enumerate(node.children):
-            if not child is None:
-                ranks[i] = child.N
+            if child is not None:
+                rank_index = node.state.move_to_move_index(node.moves_to_children[i])
+                ranks[rank_index] = child.N
         return ranks
 
 
