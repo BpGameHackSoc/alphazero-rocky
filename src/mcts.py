@@ -50,8 +50,9 @@ class MCTS():
 
     def __add_dirichlet_noise(self):
         n = self.root_node.state.action_space_size()
-        self.root_node.children_p = (0.75 * self.root_node.children_p +
+        self.root_node.children_p_all = (0.75 * self.root_node.children_p_all +
                                      0.25 * np.random.dirichlet([1./n] * n))
+        self.root_node.children_p = self.root_node.state.filter_by_valid(self.root_node.children_p_all,  self.root_node.moves_to_children)
 
     def run_one_simulation(self):
         """Traverse to a leaf and update statistics with back prop"""
@@ -90,12 +91,14 @@ class MCTS():
     def rank_moves(self, node):
         """Turn the aggregate statistics from the tree into scores at the root of the mcts tree
         This uses the 'robust' way of doing this, using the visit count for each child"""
-        ranks = np.zeros(node.state.action_space_size())
+        ranks = np.zeros(node.state.action_space_size(),dtype=np.int64)
+        child_moves = ranks.copy()
         for i, child in enumerate(node.children):
             if child is not None:
                 rank_index = node.state.move_to_move_index(node.moves_to_children[i])
                 ranks[rank_index] = child.N
-        return ranks
+                child_moves[rank_index] = i
+        return ranks,child_moves
 
 
     def get_playing_move(self, explore_temp=2):
@@ -104,7 +107,8 @@ class MCTS():
         :param explore_temp: Controls the willingness to explore similar to softmax scaling
         :return: node after the calculated move, the used probabilities - based on the mcts search, different from nns output
         """
-        ranks = self.rank_moves(self.root_node).astype(float)
+        ranks,child_moves = self.rank_moves(self.root_node)
+        ranks = ranks.astype(float)
         if explore_temp < MINIMUM_TEMPERATURE_ACCEPTED:
             explore_temp = 0
         else:
@@ -117,7 +121,8 @@ class MCTS():
             move_index = ranks.argmax()
             scaled_ranks = np.zeros(ranks.size)
             scaled_ranks[move_index] = 1.
-        return move_index, scaled_ranks
+        move_index_in_valid = child_moves[move_index]
+        return move_index, move_index_in_valid, scaled_ranks
 
     def backpropagation(self, node):
         v = node.V
@@ -140,7 +145,7 @@ class MCTS():
         inf['time (s)'] = self.search_time
         inf['node/s'] = self.root_node.N / self.search_time
         inf['children_p'] = self.root_node.children_p
-        inf['ranks'] = self.rank_moves(self.root_node).astype(int).tolist()
+        inf['ranks'] = self.rank_moves(self.root_node)[0].astype(int).tolist()
         return inf
 
 

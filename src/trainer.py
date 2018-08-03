@@ -126,34 +126,37 @@ class Trainer(object):
 
     def learn(self):
         n = self.no_of_games_played
-        for i in range(n, n + self.iterations):
-            sleep(0.1)
-            tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
-            # if len(self.observations) == 0:
-            #     tqdm.write(' - Using random plays, memory is empty.. - ')
-            #     sleep(0.3)
-            #     self.fill_memory_with_random_plays()
-            # else:
-            sleep(0.1)
-            for j in trange(self.episodes):
-                self.observations.extend(self.play_one_episode())
-            self.challenger = self.train_counterparty()
-            self.best_student.learning = False
-            self.challenger.learning = False
-            arena = Arena(self.game_type, self.best_student, self.challenger)
-            wins = arena.war(NO_OF_GAMES_TO_BATTLE)
-            sleep(0.1)
-            tqdm.write('Match result is : ' +  str(wins))
-            if self.challanger_takes_crown(wins):
-                tqdm.write('Accepted!')
-                self.best_student = self.challenger
-                self.best_student.name = 'best_student' 
-                self.best_student.nn.save(file_name=self.game_type+'new_checkpoint_'+str(i+1))
-            else:
-                tqdm.write('Rejected!')
-            self.best_student.learning = True
-        tqdm.write('Learning has finished.')
-        self.save_memory = self.__save_memory('memory_' + str(n+self.iterations))
+        try:
+            for i in range(n, n + self.iterations):
+                sleep(0.1)
+                tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
+                # if len(self.observations) == 0:
+                #     tqdm.write(' - Using random plays, memory is empty.. - ')
+                #     sleep(0.3)
+                #     self.fill_memory_with_random_plays()
+                # else:
+                sleep(0.1)
+                for j in trange(self.episodes):
+                    self.observations.extend(self.play_one_episode())
+                self.challenger = self.train_counterparty()
+                self.best_student.learning = False
+                self.challenger.learning = False
+                arena = Arena(self.game_type, self.best_student, self.challenger)
+                wins,move_hist= arena.war(NO_OF_GAMES_TO_BATTLE)
+                sleep(0.1)
+                # tqdm.write('Match result is : ' +  str(wins))
+                if self.challanger_takes_crown(wins):
+                    tqdm.write('Accepted!')
+                    self.best_student = self.challenger
+                    self.best_student.name = 'best_student'
+                    self.best_student.nn.save(file_name=self.game_type+'new_checkpoint_'+str(i+1))
+                else:
+                    tqdm.write('Rejected!')
+                self.best_student.learning = True
+            tqdm.write('Learning has finished.')
+            self.save_memory = self.__save_memory('memory_' + str(n+self.iterations))
+        except KeyboardInterrupt:
+            self.save_memory = self.__save_memory('memory_' + str(n+self.iterations))
 
 
     def challanger_takes_crown(self, wins):

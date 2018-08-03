@@ -73,7 +73,7 @@ class Node(object):
                     self.V = self.get_terminal_score()
 
     def __get_prediction(self, model):
-        s = self.state.to_input()
+        s = self.state.to_input(extend_batch_dim=True)
         # v, p = model.predict(np.expand_dims(s, axis=0))
         try:
             v, p = model.predict(s)

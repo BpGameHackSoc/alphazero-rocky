@@ -21,12 +21,12 @@ class StudentAgent(Agent):
         temp = kwargs.get('temp', 0)
         pre_known_node = kwargs.get('root', None)
         root = self.mcts.search(root=pre_known_node, state=state)
-        move_index, probabilities = self.mcts.get_playing_move(temp)
+        move_index, move_index_in_valid,  probabilities = self.mcts.get_playing_move(temp)
         move = state.move_index_to_move(move_index)
         self.last_run['stats'] = self.mcts.stats()
         self.last_run['probabilities'] = probabilities
-        self.last_run['chosen_child'] = root.children[move_index]
-        self.last_run['confidence'] = root.children[move_index].N / root.N
+        self.last_run['chosen_child'] = root.children[move_index_in_valid]
+        self.last_run['confidence'] = root.children[move_index_in_valid].N / root.N
         self.last_run['predicted_outcome'] = root.Q
         self.last_run['last_move'] = move
         return move

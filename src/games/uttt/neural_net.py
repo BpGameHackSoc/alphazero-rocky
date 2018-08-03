@@ -43,12 +43,12 @@ class UTTTNN(NeuralNetwork):
         )(inp)
         x = self.conv_layer(inp, 'firstconv_')
         x = Flatten()(x)
-        hand_features = Input((1045,))
+        hand_features = Input((1054,))
         x = keras.layers.concatenate([x,hand_features])
-        x = Dense(256,activation='relu',kernel_regularizer=l2(l2_reg))(x)
-        value = Dense(128,activation='relu',kernel_regularizer=l2(l2_reg))(x)
+        x = Dense(128,activation='relu',kernel_regularizer=l2(l2_reg))(x)
+        value = Dense(16,activation='relu',kernel_regularizer=l2(l2_reg))(x)
         value = Dense(1, activation='tanh', kernel_regularizer=l2(l2_reg))(value)
-        policy = Dense(256,activation='relu',kernel_regularizer=l2(l2_reg))(x)
+        policy = Dense(100,activation='relu',kernel_regularizer=l2(l2_reg))(x)
         policy = Dense(81, activation='softmax', kernel_regularizer=l2(l2_reg))(policy)
         model = Model([inp,hand_features], [value, policy])
         sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
@@ -115,8 +115,10 @@ class UTTTNN(NeuralNetwork):
 
     def learn(self, states, values, probabilities):
         vanilla_hand = list(zip(*states))
-        vanilla_board = vanilla_hand[0]
-        hand_features = vanilla_hand[1]
+        vanilla_board = np.array(vanilla_hand[0])
+        hand_features = np.array(vanilla_hand[1])
+        values = np.array(values)
+        probabilities = np.array(probabilities)
         history = self.model.fit(
             [vanilla_board,hand_features],
             [values, probabilities],

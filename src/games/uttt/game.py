@@ -72,6 +72,7 @@ class UTTTState(GameState):
         else:
             move = np.transpose(np.concatenate((self.active_subgame,move),axis=-1))
             return np.ravel_multi_index(move, self.board.shape)
+
     def move_index_to_move(self,move_index):
         if self.active_subgame is None:
             move = np.unravel_index(move_index,self.board.shape)
@@ -188,15 +189,15 @@ class UTTTState(GameState):
         else:
             raise BoardNotFinishedError
 
-    def get_layers(self, board, gloabal_wins, active_subgame_):
-        vanilla_board = board
-        subgame_results = tf.one_hot(gloabal_wins +1,3,name='subgame_resuts')
+    def get_layers(self, board, gloabal_wins, active_subgame_,extend_batch_dim=False):
+        vanilla_board = board * self.curr_player
+        subgame_results = gloabal_wins *self.curr_player + 1
         if active_subgame_ is None:
             active_subgame = 9
         else:
             active_subgame = np.ravel_multi_index(active_subgame_,board.shape[:2])
         no_subgames = board[0,0,:,:].size
-        act_sub_t = tf.one_hot(active_subgame, no_subgames+1,name='active_subgame')
+        # act_sub_t = tf.one_hot(active_subgame, no_subgames+1,name='active_subgame')
         nearly_done = []
         for subgame in vanilla_board.reshape(-1,*vanilla_board.shape[2:]).copy():
             axes = np.concatenate((subgame, subgame.T,
@@ -211,21 +212,20 @@ class UTTTState(GameState):
             # np.ravel_multi_index(axes[pos_part].T,(2,2,2))
             cont[pos_part] = np.ravel_multi_index(axes[pos_part].T.astype(np.int64), (2, 2, 2))
             cont[non_pos_part] = np.ravel_multi_index(axes[non_pos_part].T.astype(np.int64), (2, 2, 2), 'wrap') + 7
-            cont = tf.one_hot(cont,14)
             nearly_done.append(cont)
         vanilla_board = vanilla_board.swapaxes(-2, -3).reshape((9, 9))
-        vanilla_board = vanilla_board[np.newaxis,...,np.newaxis]
-        threealogline = tf.reshape(tf.concat(nearly_done, axis=0), [-1])
-        subgame_res = tf.reshape(subgame_results, [-1])
-        active_sub = tf.reshape(act_sub_t, [-1])
+        vanilla_board = vanilla_board[...,np.newaxis]
+        threealogline = self.one_hot(np.concatenate(nearly_done, axis=0).reshape((-1,)),14)
+        subgame_res = self.one_hot(subgame_results.reshape(-1).astype(np.int64),4)
+        active_sub = self.one_hot(active_subgame,10)
         try:
-            hand_features = tf.concat([threealogline, subgame_res, active_sub], axis=0)
+            hand_features = np.concatenate([threealogline.reshape(-1), subgame_res.reshape(-1), active_sub.reshape(-1)], axis=0)
         except ValueError:
             pass
             raise
-        with tf.Session().as_default():
-            hand_features = np.array(hand_features.eval())
-        hand_features = hand_features[np.newaxis,...]
+        if extend_batch_dim:
+            hand_features = hand_features[np.newaxis,...]
+            vanilla_board = vanilla_board[np.newaxis,...]
         return [vanilla_board,hand_features]
 
         # n = BOARD_SIZE*BOARD_SIZE
@@ -242,6 +242,9 @@ class UTTTState(GameState):
         # x[-2] = self.board.reshape(-1,n)[:,0:n:BOARD_SIZE+1].reshape(4,4)
         # x[-1] = self.board.reshape(-1,n)[:,BOARD_SIZE-1:n-BOARD_SIZE+1:BOARD_SIZE-1].reshape(4,4)
         # return x
+    def one_hot(self,array,no_classes):
+        return np.eye(no_classes)[array]
+
     def reshape_board_to_2D(self,board):
         new_board = board.swapaxes(-2, -3).reshape((9, 9))
         return new_board
@@ -326,7 +329,7 @@ class UTTTState(GameState):
     def swtich_player(self):
         self.curr_player = self.curr_player * -1
 
-    def to_input(self, board=None):
+    def to_input(self, board=None,extend_batch_dim=False):
         if board is None:
             board = self.board
-        return self.get_layers(board, self.global_wins, self.active_subgame)
+        return self.get_layers(board, self.global_wins, self.active_subgame,extend_batch_dim)
