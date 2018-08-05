@@ -56,10 +56,14 @@ class Arena(object):
 
     def __display(self, verbose, state, agent):
         if verbose >= 2:
+            print("Printing agent {}".format(agent.name))
             agent.evaluate(state)
         if verbose > 0 :
             if state.is_over():
-                print('Game over. Winner is: ' + state.winner().str())
+                try:
+                    print('Game over. Winner is: ' + state.winner().str())
+                except AttributeError:
+                    print('Game over. Winner is: ' + str(state.winner()))
             print('=======================================')
             print()
 

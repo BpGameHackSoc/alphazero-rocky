@@ -29,6 +29,7 @@ class StudentAgent(Agent):
         self.last_run['confidence'] = root.children[move_index_in_valid].N / root.N
         self.last_run['predicted_outcome'] = root.Q
         self.last_run['last_move'] = move
+        self.last_run['move_index_in_valid'] = move_index_in_valid
         return move
 
     def evaluate(self, state, **kwargs):
@@ -43,7 +44,7 @@ class StudentAgent(Agent):
 
     def str_stats(self):
         s = self.last_run['stats']
-        move = self.last_run['last_move']
+        move_index_in_valid = self.last_run['move_index_in_valid']
 
         out = '-' * 80 + '\n'
         out += '| Simulations: %13d | Time (s): %13.2f | Node/s: %13.2f |\n' % (s['n'], s['time (s)'], s['node/s'])
@@ -56,6 +57,6 @@ class StudentAgent(Agent):
                                                                                  s['win_chance'] * 100,
                                                                                  s['max_depth'])
         out += '=' * 80 + '\n'
-        out += '| Preferred move: %-20d | Final move: %-26d|\n' % (s['children_p'].argmax(), move)
+        out += '| Preferred move: %-20d | Final move: %-26d|\n' % (s['children_p'].argmax(), move_index_in_valid)
         out += '-' * 80 + '\n'
         return out

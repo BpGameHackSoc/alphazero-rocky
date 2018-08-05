@@ -13,4 +13,5 @@ class Player(IntEnum):
     B = -1
     FIRST = 1
     SECOND = -1
-    DRAW  = 2
+    SUB_DRAW  = 2
+    DRAW = 0

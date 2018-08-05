@@ -21,6 +21,7 @@ class UTTTState(GameState):
         self.curr_player = Player.FIRST
         self.moves_played = 0
         self.active_subgame = None
+        self.finished = False
         self.won_by = Player.NONE
 
     def __str__(self):
@@ -141,14 +142,18 @@ class UTTTState(GameState):
         if self.did_submove_win_subgame(move_3x3,board_3x3,player):
             return player
         if self.subgame_full(board_3x3):
-            return Player.DRAW
+            return Player.SUB_DRAW
         return  Player.NONE
 
     def subgame_full(self,subgame):
         return Player.NONE not in subgame
 
     def record_game_finishes(self, result):
-        self.won_by = result
+        self.finished = True
+        if result == Player.SUB_DRAW:
+            self.won_by = Player.DRAW
+        else:
+            self.won_by = result
 
     def record_sub_finishes(self,main_index, player):
         self.global_wins[main_index] = player
@@ -181,10 +186,10 @@ class UTTTState(GameState):
         return np.all(arr == arr[axis])
 
     def is_over(self):
-        return self.won_by
+        return self.finished
 
     def winner(self):
-        if self.won_by:
+        if self.is_over():
             return Player(self.won_by)
         else:
             raise BoardNotFinishedError

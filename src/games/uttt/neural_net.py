@@ -12,7 +12,7 @@ import numpy as np
 import string
 from src.general_nn import NeuralNetwork
 
-l2_reg = 0.0005
+l2_reg = 0.001
 
 class UTTTNN(NeuralNetwork):
     def __init__(self, model_name=None):
@@ -41,13 +41,12 @@ class UTTTNN(NeuralNetwork):
             data_format='channels_last',
             name="conv"
         )(inp)
-        x = self.conv_layer(inp, 'firstconv_')
         x = Flatten()(x)
         hand_features = Input((1054,))
         x = keras.layers.concatenate([x,hand_features])
         x = Dense(128,activation='relu',kernel_regularizer=l2(l2_reg))(x)
         value = Dense(16,activation='relu',kernel_regularizer=l2(l2_reg))(x)
-        value = Dense(1, activation='tanh', kernel_regularizer=l2(l2_reg))(value)
+        value = Dense(1, activation='tanh', kernel_regularizer=l2(l2_reg/10))(value)
         policy = Dense(100,activation='relu',kernel_regularizer=l2(l2_reg))(x)
         policy = Dense(81, activation='softmax', kernel_regularizer=l2(l2_reg))(policy)
         model = Model([inp,hand_features], [value, policy])

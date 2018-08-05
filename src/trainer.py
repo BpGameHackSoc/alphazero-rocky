@@ -142,9 +142,9 @@ class Trainer(object):
                 self.best_student.learning = False
                 self.challenger.learning = False
                 arena = Arena(self.game_type, self.best_student, self.challenger)
-                wins,move_hist= arena.war(NO_OF_GAMES_TO_BATTLE)
+                wins, move_hist= arena.war(NO_OF_GAMES_TO_BATTLE,0)
                 sleep(0.1)
-                # tqdm.write('Match result is : ' +  str(wins))
+                tqdm.write('Match result is : ' +  str(wins))
                 if self.challanger_takes_crown(wins):
                     tqdm.write('Accepted!')
                     self.best_student = self.challenger
