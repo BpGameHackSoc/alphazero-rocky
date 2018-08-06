@@ -3,7 +3,9 @@ from src.general_player import Player
 from .errors import MoveError,BoardNotFinishedError,MoveInFinishedBoardError
 import numpy as np
 import copy
-import tensorflow as tf
+import string
+import tensorflow as tf1
+
 
 
 class UTTTState(GameState):
@@ -23,22 +25,34 @@ class UTTTState(GameState):
         self.active_subgame = None
         self.finished = False
         self.won_by = Player.NONE
+        self.last_move = None
+        self.move_before_last = None
 
     def __str__(self):
         """Returns a pretty printed representation of the main board"""
         pretty_printed = ''
         # TODO: Shouldn't access sub-board private var
-        board_size = len(self.board)
+        board = self.board.copy()
+        board_size = len(board)
         board_size_range = range(board_size)
-        for (mb_idx, mb_row) in enumerate(self.board):
+        k=9
+        for (mb_idx, mb_row) in enumerate(board):
             for sub_board_row_num in board_size_range:
                 for (sb_idx, sub_board) in enumerate(mb_row):
-                    for cell in sub_board[sub_board_row_num]:
-                        pretty_printed += str(int(cell)) + ' '
+                    for i,cell in enumerate(sub_board[sub_board_row_num]):
+                        cell_ind = (mb_idx,sub_board_row_num,sb_idx,i)
+                        if cell_ind == self.last_move:
+                            color = 'red'
+                        elif cell_ind == self.move_before_last:
+                            color = 'green'
+                        else:
+                            color = 'black'
+                        pretty_printed += self.cell_string(cell,color) + ' '
                     # Print vertical separator - if not last sub_board
                     if sb_idx < board_size - 1:
                         pretty_printed += '| '
-                pretty_printed += '\n'
+                pretty_printed += ' ' + str(k) + '\n'
+                k-=1
             # Print horizontal separators
             # Only if this is not the last row
             if mb_idx < board_size - 1:
@@ -48,8 +62,30 @@ class UTTTState(GameState):
                     if bm_idx < board_size - 1:
                         pretty_printed += '| '
                 pretty_printed += '\n'
-
+        # pretty_printed += '\n'
+        k = 0
+        for i in range(board_size):
+            for j in range(board_size):
+                pretty_printed += string.ascii_uppercase[k] + ' '
+                k+=1
+            pretty_printed += '  '
         return pretty_printed
+
+    def cell_string(self, cell, color='black'):
+        if color == 'black':
+            color_definer = ''
+        elif color == 'red':
+            color_definer = '\x1b[31m'
+        elif color == 'green':
+            color_definer = '\x1b[32m'
+        if cell == 1:
+            value = 'X'
+        elif cell == -1:
+            value =  'O'
+        else:
+            value = ' '
+        normalizer = '\x1b[0m'
+        return color_definer + value + normalizer
 
     def turn(self) -> Player:
         return self.curr_player
@@ -102,6 +138,7 @@ class UTTTState(GameState):
         """Apply move to the board. Move is a 4 dimensional tuple index if self.active_subgame if None,
         2 dimensional otherwise."""
         move = tuple(move)
+        self.move_before_last = self.last_move
         if self.is_over():
             raise MoveInFinishedBoardError
         player = self.curr_player
@@ -109,9 +146,11 @@ class UTTTState(GameState):
             submove = move[2:]
             main_index = move[:2]
             subgame = self.board[move[0], move[1]]
+            self.last_move = move
         else:
             submove = move
             main_index = self.active_subgame
+            self.last_move = (*main_index,*move)
             subgame = self.board[main_index]
         if self.is_forbidden_submove(submove, subgame):
             raise MoveError
@@ -125,6 +164,7 @@ class UTTTState(GameState):
         self.manage_active_subgame(submove)
         self.swtich_player()
         self.moves_played +=1
+
 
     def get_sub_res_by_index(self,main_index):
         return self.global_wins[main_index]
@@ -233,20 +273,6 @@ class UTTTState(GameState):
             vanilla_board = vanilla_board[np.newaxis,...]
         return [vanilla_board,hand_features]
 
-        # n = BOARD_SIZE*BOARD_SIZE
-        # x = np.zeros((3*BOARD_SIZE+2,BOARD_SIZE,BOARD_SIZE), dtype=int)
-        # for dim in range(3):
-        #     for j in range(BOARD_SIZE):
-        #         i = dim * BOARD_SIZE + j
-        #         if dim == 0:
-        #             x[i] = self.board[j,:,:]
-        #         elif dim == 1:
-        #             x[i] = self.board[:,j,:]
-        #         else:
-        #             x[i] = self.board[:,:,j]
-        # x[-2] = self.board.reshape(-1,n)[:,0:n:BOARD_SIZE+1].reshape(4,4)
-        # x[-1] = self.board.reshape(-1,n)[:,BOARD_SIZE-1:n-BOARD_SIZE+1:BOARD_SIZE-1].reshape(4,4)
-        # return x
     def one_hot(self,array,no_classes):
         return np.eye(no_classes)[array]
 
