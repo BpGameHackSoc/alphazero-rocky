@@ -100,8 +100,9 @@ class MCTS():
         if explore_temp < MINIMUM_TEMPERATURE_ACCEPTED:
             explore_temp = 0
         else:
-            ranks = ranks ** explore_temp
+            ranks = ranks ** (1/explore_temp)
             ranks /= ranks.sum()
+
         if self.learning and explore_temp > 0:
             move_index = int(np.random.choice(np.arange(ranks.size), 1, p=ranks))
             scaled_ranks = ranks

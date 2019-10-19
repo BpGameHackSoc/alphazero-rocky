@@ -23,7 +23,7 @@ class Arena(object):
             battle_wins, battle_history = self.battle(verbose)
             wins += battle_wins
             history.append(battle_history)
-        return wins, history
+        return wins
 
     def battle(self, verbose=0):
         '''

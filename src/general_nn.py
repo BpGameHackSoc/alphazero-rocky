@@ -1,8 +1,6 @@
 import abc
-from keras.layers import Activation, Conv2D, Dense, Flatten, Input
+from keras.layers import Activation, Conv2D, Dense, Flatten, Input, Concatenate, BatchNormalization, Add
 from keras.models import Sequential, load_model, Model
-from keras.layers.merge import Add
-from keras.layers.normalization import BatchNormalization
 from keras.initializers import RandomUniform
 from keras.regularizers import l2
 from keras import optimizers
@@ -34,9 +32,10 @@ class NeuralNetwork(abc.ABC):
         value = self.value_head(x)
         policy = self.policy_head(x)
         model = Model(inp, [value, policy])
-        sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.9, nesterov=True)
+        sgd = optimizers.SGD(lr=0.0001, momentum=0.9)
         model.compile(loss=['mean_squared_error', 'categorical_crossentropy'],
                       optimizer=sgd)
+        model.summary()
         self.model = model
 
     def res_layer(self, x, index):
@@ -90,9 +89,9 @@ class NeuralNetwork(abc.ABC):
             data_format='channels_first',
             name=prefix+"_conv"+suffix
         )(x)
-        x = BatchNormalization(axis=1, name=prefix+"_batchnorm"+suffix)(x)
+        x = BatchNormalization(name=prefix+"_batchnorm"+suffix)(x)
         if not original_x is None:
-            x = Add(name=prefix+"_sum"+suffix)([original_x, x])
+            x = Concatenate(name=prefix+"_sum"+suffix)([original_x, x])
         x = Activation("relu", name=prefix+"_relu"+suffix)(x)
         return x
 
@@ -122,6 +121,9 @@ class NeuralNetwork(abc.ABC):
 
     def load(self, file_name):
         self.model = load_model(WORK_FOLDER + file_name + '.h5')
+        sgd = optimizers.SGD(lr=0.0001, momentum=0.9)
+        self.model.compile(loss=['mean_squared_error', 'categorical_crossentropy'],
+                      optimizer=sgd)
 
     def __random_string(self, n):
         return ''.join(np.random.choice(list(string.ascii_lowercase+ string.digits), n))

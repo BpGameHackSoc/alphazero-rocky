@@ -83,8 +83,6 @@ class Trainer(object):
         state = self.start_state.copy()
         observations = deque()
         rewards = deque()
-        obs_extend = observations.extend
-        rew_append = rewards.append
         root = None
         possible_move_len = state.action_space_size()
         while not state.is_over():
@@ -92,15 +90,15 @@ class Trainer(object):
             move = self.best_student.move(state, temp=temp, root=root)
             probabilities = self.best_student.last_run['probabilities']
             root = self.best_student.last_run['chosen_child']
-            obs_extend(state.to_all_symmetry_input(probabilities))
-            rew_append([self.best_student.last_run['predicted_outcome'],
+            observations.extend(state.to_all_symmetry_input(probabilities))
+            rewards.append([self.best_student.last_run['predicted_outcome'],
                         self.best_student.last_run['confidence']])
             state = state.move(move)
 
         # Saving last state in order determine what means winning
         probabilities = self.best_student.last_run['probabilities']
         probabilities = np.full((possible_move_len, ), 1./possible_move_len)
-        obs_extend(state.to_all_symmetry_input(probabilities))
+        observations.extend(state.to_all_symmetry_input(probabilities))
 
         # Update value as: 1 for winner, -1 for losers, 0 for draw
         winner = state.winner()
@@ -122,6 +120,7 @@ class Trainer(object):
             sleep(0.1)
             tqdm.write(' *** ITERATION : ' + str(i+1) + ' ***')
             # if len(self.observations) == 0:
+            #     sleep(0.1)
             #     tqdm.write(' - Using random plays, memory is empty.. - ')
             #     sleep(0.3)
             #     self.fill_memory_with_random_plays()
@@ -201,9 +200,9 @@ class Trainer(object):
             return Connect4NN(model_name=model_name)
 
     def __temperature(self, move_count):
-        if move_count <= self.low_temp_threshold:
-            return 2
-        if move_count <= self.high_temp_threshold:
-            return 1
-        else:
-            return max(0, (1-self.temp_decay*move_count))
+        # if move_count <= self.low_temp_threshold:
+        #     return 2
+        # if move_count <= self.high_temp_threshold:
+        #     return 1
+        # else:
+        return max(0, (1.5-self.temp_decay*move_count))
